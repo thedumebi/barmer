@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
-const vendorModel = require("../../../../Jumga/server/models/vendors.models");
 
 const userSchema = new mongoose.Schema({
   id: {
     type: Number,
-    required: true,
     unique: true,
   },
   username: {
     type: String,
+    required: true,
     unique: true,
   },
   password: String,

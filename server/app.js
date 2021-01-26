@@ -54,6 +54,21 @@ app.post("/api/login", function (req, res) {
   loginUser(req, res);
 });
 
+app.get("/api/checkAuthentication", function (req, res) {
+  if (req.isAuthenticated()) {
+    const authenticated = Boolean(req.user !== "undefined");
+    res.status(200).json({ user: req.user, authenticated });
+  } else {
+    const authenticated = Boolean(req.user === "undefined");
+    res.send({ user: req.user, authenticated });
+  }
+});
+
+app.get("/api/logout", function (req, res) {
+  req.logout();
+  res.status(200).json({ status: res.statusMessage });
+});
+
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 5000;

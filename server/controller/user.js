@@ -9,15 +9,15 @@ exports.createUser = async function (req, res) {
       req.body.password,
       function (err, user) {
         if (err) {
-          console.log(err);
-          console.log(res);
+          res.send({status: err.message});
         } else {
+          user.id = user ? user.id + 1 : 1;
           user.name = req.body.fname + " " + req.body.lname;
           user.phone_number = req.body.phone;
           user.save(function (err) {
             if (!err) {
               passport.authenticate("local")(req, res, function () {
-                res.send({ status: res.statusMessage, user: req.user });
+                res.send({ status: "success", user: req.user });
               });
             }
           });
@@ -38,10 +38,10 @@ exports.loginUser = async function (req, res) {
     });
     req.login(user, function (err) {
       if (err) {
-        console.log(res);
+        console.log(err);
       }
       passport.authenticate("local")(req, res, function () {
-        res.send({ status: res.statusMessage, user: req.user });
+        res.send({ status: "success", user: req.user });
       });
     });
   } catch (error) {

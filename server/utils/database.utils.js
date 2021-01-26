@@ -9,7 +9,7 @@ exports.connectDB = async () => {
       useFindAndModify: false,
     });
     mongoose.set("returnOriginal", false);
-    console.log("Database connection establiched");
+    console.log("Database connection established");
   } catch (error) {
     console.log(error);
   }
