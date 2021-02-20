@@ -1,0 +1,46 @@
+{
+  "name": "phase-2",
+  "version": "1.0.0",
+  "description": "Farmers Barter website",
+  "main": "server.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-async-handler": "^1.1.4",
+    "express-session": "^1.17.1",
+    "jimp-watermark": "^1.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
+    "mongoose": "^5.11.10",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "redux-devtools-extension": "^2.13.8"
+  },
+  "devDependencies": {
+    "concurrently": "^5.3.0",
+    "nodemon": "^2.0.6"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node backend/server",
+    "client": "npm start --prefix frontend",
+    "server": "nodemon backend/server",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIF_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thedumebi/enye-phase-3.git"
+  },
+  "author": "Daniel Chiwuzoh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thedumebi/enye-phase-3/issues"
+  },
+  "homepage": "https://github.com/thedumebi/enye-phase-3#readme"
+}
