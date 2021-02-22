@@ -20,10 +20,10 @@ const authUser = asyncHandler(async (req, res) => {
 
   if (user) {
     if (await user.matchPassword(password)) {
-      const newUser = await User.findById(user._id).select("-password");
-      res.status(201).json({
-        ...newUser._doc,
-        token: generateToken(newUser._id),
+      const { password, ...otherKeys } = user._doc;
+      res.status(200).json({
+        ...otherKeys,
+        token: generateToken(user._id),
       });
     } else {
       res.status(401);
@@ -40,8 +40,12 @@ const authUser = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc Register a new user
+// @route POST /api/users/
+// @access Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { fname, lname, phoneNumber, email, username, password } = req.body;
+  console.log(req.body);
+  const { name, phoneNumber, email, username, password } = req.body;
 
   const [lastUser] = await User.find().sort({ created_at: -1 }).exec();
   const userExists = await User.findOne({ email });
@@ -57,7 +61,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     id: lastUser ? lastUser.id + 1 : 1,
-    name: `${fname} ${lname}`,
+    name,
     email,
     password,
     username,
@@ -66,7 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (user) {
     const newUser = await User.findById(user._id).select("-password");
-    res.status(201).json({
+    res.status(200).json({
       ...newUser._doc,
       token: generateToken(newUser._id),
     });
@@ -76,4 +80,81 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { authUser, registerUser };
+// @desc Get user profile
+// @route GET /api/users/:id || GET /api/users/profile
+// @access Private
+const getUserProfile = asyncHandler(async (req, res) => {
+  let user;
+  if (req.path == "/profile") {
+    user = await User.findById(req.user._id).select("-password");
+  } else if (req.params.id) {
+    user = await User.findById(req.params.id).select("-password");
+  }
+
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+// @desc Update user profile
+// @route PATCH /api/user/:id || PATCH /api/user/profile
+// @access Private
+const updateProfile = asyncHandler(async (req, res) => {
+  let user;
+  if (req.path == "/profile") {
+    user = await User.findByIdAndUpdate(
+      req.user._id,
+      { $set: req.body },
+      { runValidators: true, new: true }
+    );
+  } else if (req.params.id) {
+    user = await User.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { runValidators: true, new: true }
+    );
+  }
+
+  if (user) {
+    const { password, ...otherKeys } = user._doc;
+    res.status(200).json(otherKeys);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+// @desc    Get all users
+// @route   GET /api/users
+// @access  Private/Admin
+const getUsers = asyncHandler(async (req, res) => {
+  const users = await User.find().sort({ created_at: -1 });
+  res.json(users);
+});
+
+// @desc    Delete user
+// @route   DELETE /api/users/:id
+// @access  Private/Admin
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.params.id);
+
+  if (user) {
+    await user.remove();
+    res.status(200).json({ message: "User removed" });
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+module.exports = {
+  authUser,
+  registerUser,
+  getUserProfile,
+  updateProfile,
+  getUsers,
+  deleteUser,
+};

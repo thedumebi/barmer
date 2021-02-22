@@ -11,8 +11,10 @@ const Login = ({ location, history, match }) => {
   const url = match.url;
   const [registerUser, setRegisterUser] = useState({
     username: "",
-    fname: "",
-    lname: "",
+    name: {
+      fname: "",
+      lname: "",
+    },
     password: "",
     phoneNumber: "",
     email: "",
@@ -56,7 +58,13 @@ const Login = ({ location, history, match }) => {
       }
     }
     setRegisterUser((prevValue) => {
-      return { ...prevValue, [name]: value };
+      if (name === "fname") {
+        return { ...prevValue, name: { ...prevValue.name, fname: value } };
+      } else if (name === "lname") {
+        return { ...prevValue, name: { ...prevValue.name, lname: value } };
+      } else {
+        return { ...prevValue, [name]: value };
+      }
     });
   }
 
@@ -113,7 +121,7 @@ const Login = ({ location, history, match }) => {
           <div>
             <Form.Group>
               <Form.Text>Password strength</Form.Text>
-              <Form.Control id="password-strength" />
+              <Form.Control id="password-strength" readOnly />
               <Form.Text id="password-strength-text"></Form.Text>
             </Form.Group>
             <Form.Row>
