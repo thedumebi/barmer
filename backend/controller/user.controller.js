@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const generateToken = require("../utils/generateToken.utils");
-const User = require("../models/users.models");
+const User = require("../models/users.model");
 
 // @desc Auth user & get token
 // @route POST /api/users/login
@@ -44,7 +44,6 @@ const authUser = asyncHandler(async (req, res) => {
 // @route POST /api/users/
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
-  console.log(req.body);
   const { name, phoneNumber, email, username, password } = req.body;
 
   const [lastUser] = await User.find().sort({ created_at: -1 }).exec();
@@ -132,7 +131,7 @@ const updateProfile = asyncHandler(async (req, res) => {
 // @access  Private/Admin
 const getUsers = asyncHandler(async (req, res) => {
   const users = await User.find().sort({ created_at: -1 });
-  res.json(users);
+  res.status(200).json(users);
 });
 
 // @desc    Delete user

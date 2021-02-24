@@ -31,6 +31,8 @@ const userSchema = new mongoose.Schema({
   name: String,
   phoneNumber: String,
   items: Array,
+  favorites: Array,
+  location: String,
   incomingRequests: [requestSchema],
   outgoingRequests: [requestSchema],
   isAdmin: {

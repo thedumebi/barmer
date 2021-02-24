@@ -1,12 +1,10 @@
 require("dotenv").config();
 const express = require("express");
-// const cors = require("cors");
-const path = require("path");
-const colors = require("colors");
-const multer = require("multer");
 const connectDB = require("./config/database.utils");
 const { notFound, errorHandler } = require("./middleware/error.middleware");
 const userRoutes = require("./routes/user.routes");
+const itemRoutes = require("./routes/item.routes");
+const uploadRoutes = require("./routes/upload.routes");
 
 connectDB();
 
@@ -17,6 +15,8 @@ app.use(express.urlencoded());
 
 // Routes
 app.use("/api/users", userRoutes);
+app.use("/api/items", itemRoutes);
+app.use("/api/upload", uploadRoutes);
 
 //Make uploads folder static
 app.use("/backend/uploads", express.static(__dirname + "/uploads"));
@@ -30,26 +30,6 @@ if (process.env.NODE_ENV !== "development") {
     res.send("API is running ....".cyan.bold);
   });
 }
-
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000",
-//     methods: "GET, HEAD, PUT, PATCH, POST, DELETE",
-//     credentials: true,
-//   })
-// );
-
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, `${__dirname}/public/uploads/images`);
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, file.fieldname);
-//   },
-// });
-// const upload = multer({
-//   storage: storage,
-// });
 
 app.use(notFound);
 app.use(errorHandler);
