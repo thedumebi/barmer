@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const color = require("colors");
 const connectDB = require("./config/database.utils");
 const { notFound, errorHandler } = require("./middleware/error.middleware");
 const userRoutes = require("./routes/user.routes");

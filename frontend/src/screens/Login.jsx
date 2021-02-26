@@ -11,11 +11,10 @@ const Login = ({ location, history, match }) => {
   const url = match.url;
   const [registerUser, setRegisterUser] = useState({
     username: "",
-    name: {
-      fname: "",
-      lname: "",
-    },
+    fname: "",
+    lname: "",
     password: "",
+    confirmPassword: "",
     phoneNumber: "",
     email: "",
   });
@@ -31,6 +30,7 @@ const Login = ({ location, history, match }) => {
   const { loading: registerLoading, error: registerError } = userRegister;
 
   const redirect = location.search ? location.search.split("=")[1] : "/";
+  const [message, setMessage] = useState(null);
 
   useEffect(() => {
     if (userInfo) {
@@ -58,14 +58,15 @@ const Login = ({ location, history, match }) => {
       }
     }
     setRegisterUser((prevValue) => {
-      if (name === "fname") {
-        return { ...prevValue, name: { ...prevValue.name, fname: value } };
-      } else if (name === "lname") {
-        return { ...prevValue, name: { ...prevValue.name, lname: value } };
-      } else {
-        return { ...prevValue, [name]: value };
-      }
+      return { ...prevValue, [name]: value };
     });
+    if (name === "confirmPassword") {
+      if (value !== registerUser.password) {
+        setMessage("Passwords do not match");
+      } else {
+        setMessage(null);
+      }
+    }
   }
 
   function handleLogin(event) {
@@ -79,7 +80,11 @@ const Login = ({ location, history, match }) => {
     if (url === "/login") {
       dispatch(login(loginUser));
     } else if (url === "/register") {
-      dispatch(register(registerUser));
+      if (registerUser.password !== registerUser.confirmPassword) {
+        setMessage("Please ensure your password matches");
+      } else {
+        dispatch(register(registerUser));
+      }
     }
   }
 
@@ -123,6 +128,18 @@ const Login = ({ location, history, match }) => {
               <Form.Text>Password strength</Form.Text>
               <Form.Control id="password-strength" readOnly />
               <Form.Text id="password-strength-text"></Form.Text>
+            </Form.Group>
+
+            <Form.Group>
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                type="password"
+                name="confirmPassword"
+                placeholder="Confirm password"
+                value={registerUser.confirmPassword}
+                onChange={handleRegister}
+              />
+              {message && <Message variant="danger">{message}</Message>}
             </Form.Group>
             <Form.Row>
               <Form.Group as={Col}>

@@ -2,8 +2,9 @@ import React from "react";
 import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../actions/user.actions";
+import DarkModeButton from "./DarkModeButton";
 
-function Header() {
+function Header({ mode }) {
   const dispatch = useDispatch();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -14,12 +15,13 @@ function Header() {
 
   return (
     <header>
-      <Container>
-        <Navbar collapseOnSelect bg="light" expand="md">
+      <Navbar collapseOnSelect bg="dark" variant="dark" expand="md">
+        <Container>
           <Navbar.Brand href="/">Barmer</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="ml-auto">
+              <DarkModeButton mode={mode} />
               <Nav.Link href="/">Home</Nav.Link>
               <Nav.Link href="/shops">Shops</Nav.Link>
               <Nav.Link href="/items">Items</Nav.Link>
@@ -28,7 +30,7 @@ function Header() {
                   title={userInfo.username}
                   id="collasible-nav-dropdown"
                 >
-                  <NavDropdown.Item href="/account">Account</NavDropdown.Item>
+                  <NavDropdown.Item href="/profile">Profile</NavDropdown.Item>
                   <NavDropdown.Item href="/history">
                     Barmer History
                   </NavDropdown.Item>
@@ -42,6 +44,7 @@ function Header() {
                     Request Received
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
+                  <NavDropdown.Item href="/settings">Settings</NavDropdown.Item>
                   <NavDropdown.Item onClick={logoutHandler}>
                     Logout
                   </NavDropdown.Item>
@@ -67,8 +70,8 @@ function Header() {
               )}
             </Nav>
           </Navbar.Collapse>
-        </Navbar>
-      </Container>
+        </Container>
+      </Navbar>
     </header>
   );
 }

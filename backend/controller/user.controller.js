@@ -44,7 +44,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @route POST /api/users/
 // @access Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { name, phoneNumber, email, username, password } = req.body;
+  const { fname, lname, phoneNumber, email, username, password } = req.body;
 
   const [lastUser] = await User.find().sort({ created_at: -1 }).exec();
   const userExists = await User.findOne({ email });
@@ -60,7 +60,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   const user = await User.create({
     id: lastUser ? lastUser.id + 1 : 1,
-    name,
+    name: `${fname} ${lname}`,
     email,
     password,
     username,
@@ -83,12 +83,7 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route GET /api/users/:id || GET /api/users/profile
 // @access Private
 const getUserProfile = asyncHandler(async (req, res) => {
-  let user;
-  if (req.path == "/profile") {
-    user = await User.findById(req.user._id).select("-password");
-  } else if (req.params.id) {
-    user = await User.findById(req.params.id).select("-password");
-  }
+  const user = await User.findById(req.params.id).select("-password");
 
   if (user) {
     res.status(200).json(user);
@@ -102,24 +97,24 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @route PATCH /api/user/:id || PATCH /api/user/profile
 // @access Private
 const updateProfile = asyncHandler(async (req, res) => {
-  let user;
-  if (req.path == "/profile") {
-    user = await User.findByIdAndUpdate(
-      req.user._id,
-      { $set: req.body },
-      { runValidators: true, new: true }
-    );
-  } else if (req.params.id) {
-    user = await User.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { runValidators: true, new: true }
-    );
+  const usernameExists = await User.findOne({ username: req.body.username });
+  if (usernameExists) {
+    res.status(400);
+    throw new Error("Sorry, that username is taken");
   }
+
+  const user = await User.findByIdAndUpdate(
+    req.params.id,
+    { $set: req.body },
+    { new: true }
+  );
 
   if (user) {
     const { password, ...otherKeys } = user._doc;
-    res.status(200).json(otherKeys);
+    res.status(200).json({
+      ...otherKeys,
+      token: generateToken(user._id),
+    });
   } else {
     res.status(404);
     throw new Error("User not found");
