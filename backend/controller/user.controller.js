@@ -13,7 +13,9 @@ const authUser = asyncHandler(async (req, res) => {
   if (emailRegex.test(input)) {
     criteria = { email: input };
   } else if (usernameRegex.test(input)) {
-    criteria = { username: input };
+    criteria = {
+      username: { $regex: new RegExp(`^${input}$`), $options: "i" },
+    };
   }
 
   const user = await User.findOne(criteria);
@@ -52,11 +54,14 @@ const registerUser = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error("User already exists");
   }
-  const usernameExists = await User.findOne({ username });
-  if (usernameExists) {
-    res.status(400);
-    throw new Error("Sorry, that username is taken");
-  }
+  const users = await User.find();
+  users.map((user) => {
+    console.log(user);
+    if (user.username.toLowerCase() === req.body.username.toLowerCase()) {
+      res.status(400);
+      throw new Error("Sorry, that username is taken");
+    }
+  });
 
   const user = await User.create({
     id: lastUser ? lastUser.id + 1 : 1,
@@ -97,7 +102,9 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @route PATCH /api/user/:id || PATCH /api/user/profile
 // @access Private
 const updateProfile = asyncHandler(async (req, res) => {
-  const usernameExists = await User.findOne({ username: req.body.username });
+  const usernameExists = await User.findOne({
+    username: { $regex: new RegExp(`^${req.body.username}$`), $options: "i" },
+  });
   if (usernameExists) {
     res.status(400);
     throw new Error("Sorry, that username is taken");
