@@ -90,6 +90,7 @@ const Login = ({ location, history, match }) => {
 
   return (
     <FormContainer>
+      <h2>{url === "/login" ? "Welcome back" : "Get Started"}</h2>
       {error && <Message variant="danger">{error}</Message>}
       {loading && <Loader />}
       {registerError && <Message variant="danger">{registerError}</Message>}
@@ -185,11 +186,7 @@ const Login = ({ location, history, match }) => {
             </Form.Group>
           </div>
         )}
-        <Button
-          className="btn btn-dark btn-lg"
-          onClick={submitHandler}
-          type="button"
-        >
+        <Button variant="primary" onClick={submitHandler} type="button">
           {url === "/login" ? "Login" : "Register"}
         </Button>
       </Form>
@@ -197,7 +194,7 @@ const Login = ({ location, history, match }) => {
         <p>
           Don't have an account yet?{" "}
           <Link to="/register">
-            <Button className="btn-sm">Register</Button>
+            <Button className=" btn btn-dark">Register</Button>
           </Link>
         </p>
       )}
@@ -205,7 +202,7 @@ const Login = ({ location, history, match }) => {
         <p>
           Have an account?
           <Link to="/login">
-            <Button className="btn-sm">Login</Button>
+            <Button className="btn btn-dark">Login</Button>
           </Link>
         </p>
       )}

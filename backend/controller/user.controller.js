@@ -70,6 +70,7 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
     username,
     phoneNumber,
+    created_at: Date.now(),
   });
 
   if (user) {

@@ -1,12 +1,27 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Items from "./Items";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteStore } from "../actions/store.actions";
 
 const Stores = ({ store }) => {
-  const userDetails = useSelector((state) => state.userDetail);
-  const { user } = userDetails;
+  const url = useRouteMatch();
+  const history = useHistory();
+  console.log(store);
+  const userLogin = useSelector((state) => state.userLogin);
+  const { userInfo } = userLogin;
+
+  const dispatch = useDispatch();
+
+  const deleteHandler = (event) => {
+    if (window.confirm("This is an irreversible act. Are you sure?")) {
+      if (window.confirm("Last warning. Delete?")) {
+        dispatch(deleteStore(store._id));
+        history.push("/profile");
+      }
+    }
+  };
 
   return (
     <div className="case">
@@ -19,18 +34,37 @@ const Stores = ({ store }) => {
       )}
       <div className="content">
         <h1 className="sub-heading">{store.name}</h1>
-        {store.items.map((item) => (
-          <Items key={item.id} item={item} />
-        ))}
+        <small>{store.category}</small>
+        <p>Description: {store.description}</p>
+        {store.items &&
+          store.items.map((item) => <Items key={item.id} item={item} />)}
       </div>
-      <Link to={`/store/${store._id}`}>
-        <Button classname="btn-dark" type="button">
-          Visit Store
+
+      {store._id && url.path === "/store/:id" && (
+        <Button className="btn-dark" type="button" onClick={deleteHandler}>
+          Delete Store
         </Button>
-      </Link>
-      {user && user._id === store.user._id && (
-        <Link to={`/user/${user._id}/additem`}>
-          <Button classname="btn-dark" type="button">
+      )}
+
+      {store._id && url.path === "/store/:id" && (
+        <Link to={`/store/${store._id}/edit`}>
+          <Button className="btn-dark" type="button">
+            Edit Store
+          </Button>
+        </Link>
+      )}
+
+      {store._id && url.path !== "/store/:id" && (
+        <Link to={`/store/${store._id}`}>
+          <Button className="btn-dark" type="button">
+            Visit Store
+          </Button>
+        </Link>
+      )}
+
+      {store.owner && userInfo && userInfo._id === store.owner._id && (
+        <Link to={`/items/additem`}>
+          <Button className="btn-dark" type="button">
             Add a new item
           </Button>
         </Link>

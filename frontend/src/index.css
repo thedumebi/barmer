@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&family=Mr+Dafoe&display=swap");
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,13 +7,33 @@
   font-weight: 300;
 }
 
+body {
+  min-height: 100%;
+  font-family: "Montserrat", sans-serif;
+  /* font-size: medium; */
+}
+
+main {
+  min-height: 75vh;
+}
+
 footer {
+  bottom: 0;
   background-color: #343a40;
   color: white;
 }
 footer a {
   color: wheat !important;
   text-decoration: none;
+}
+
+hr {
+  margin: 2% auto;
+  border-style: none;
+  border-color: grey;
+  border-width: 5px;
+  border-top-style: dotted;
+  width: 5%;
 }
 
 .loader {
@@ -21,14 +43,21 @@ footer a {
   display: block;
 }
 
+.section {
+  margin-top: 5%;
+}
+
 .btn {
   margin: 2%;
+  text-transform: none;
+  font-style: italic;
 }
 
 .big-heading {
-  font-size: 3.5rem;
+  font-size: 4.5rem;
   font-weight: 900;
-  line-height: 1.5;
+  line-height: 1.2;
+  margin-bottom: 10px;
   text-transform: none;
 }
 
@@ -36,6 +65,14 @@ footer a {
   font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.5;
+}
+
+.left {
+  text-align: left;
+}
+
+.right {
+  text-align: right;
 }
 
 .case {
@@ -64,6 +101,7 @@ footer a {
 
 .case button {
   position: relative;
+  bottom: 20px;
   float: right;
   margin-right: 10px;
   box-shadow: 0 2px 5px #ccc;
@@ -105,8 +143,12 @@ body.dark-theme h4 {
 body.dark-theme small {
   color: white;
 }
-body.dark-theme .card {
+body.dark-theme .case {
   background: #222;
+  box-shadow: none;
+}
+body.dark-theme .case button {
+  box-shadow: none;
 }
 body.dark-theme .list-group-item {
   background: #111;
@@ -245,10 +287,16 @@ body.light-theme a {
 body.light-theme .btn {
   color: #fff;
 }
-body.light-theme .card {
+body.light-theme .case {
   box-shadow: 0 2px 5px #ccc;
   background: #fff;
 }
 body.light-theme .list-group-item {
   background: #fff;
+}
+
+.home-image {
+  width: 100%;
+  position: absolute;
+  right: 10%;
 }

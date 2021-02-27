@@ -6,6 +6,11 @@ import Home from "./screens/Home";
 import { Container } from "react-bootstrap";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Settings from "./screens/Settings";
+import Profile from "./screens/Profile";
+import RegisterStore from "./screens/RegisterStore";
+import Store from "./screens/Store";
+import StoresList from "./screens/StoresList";
+import StoreEdit from "./screens/StoreEditScreen";
 
 const App = () => {
   const getCookie = (name) => {
@@ -52,6 +57,11 @@ const App = () => {
           <Route exact path="/" component={Home} />
           <Route exact path="/register" component={Login} />
           <Route exact path="/login" component={Login} />
+          <Route exact path="/profile" component={Profile} />
+          <Route exact path="/registerstore" component={RegisterStore} />
+          <Route exact path="/stores" component={StoresList} />
+          <Route exact path="/store/:id" component={Store} />
+          <Route exact path="/store/:id/edit" component={StoreEdit} />
           <Route exact path="/settings" component={Settings} />
         </Container>
       </main>

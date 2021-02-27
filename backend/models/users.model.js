@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
   },
   name: String,
   phoneNumber: String,
-  items: Array,
+  stores: Array,
   favorites: Array,
   location: String,
   incomingRequests: [requestSchema],

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Form, Button } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
+import { Link } from "react-router-dom";
 import { getUserDetails, updateUserProfile } from "../actions/user.actions";
 import { USER_UPDATE_PROFILE_RESET } from "../constants/user.constants";
 import FormContainer from "../components/FormContainer";
@@ -35,7 +36,7 @@ const Settings = ({ history }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push("/login");
+      history.push("/login?redirect=/settings");
     } else {
       if (success) {
         setSuccessMessage(success);
@@ -83,81 +84,88 @@ const Settings = ({ history }) => {
     event.preventDefault();
   };
   return (
-    <FormContainer>
-      <h2>User Settings</h2>
-      {error && <Message variant="danger">{error}</Message>}
-      {updateError && <Message variant="danger">{updateError}</Message>}
-      {successMessage && <Message variant="success">Profile Updated</Message>}
-      {loading && <Loader />}
-      <Form>
-        <Form.Group>
-          <Form.Label>Name</Form.Label>
-          <Form.Control
-            type="text"
-            name="name"
-            value={user.name}
-            onChange={handleChange}
-          />
-        </Form.Group>
+    <div>
+      <Link className="btn btn-dark my-3" to="/">
+        Back
+      </Link>
 
-        <Form.Group>
-          <Form.Label>Username</Form.Label>
-          <Form.Control
-            type="text"
-            name="username"
-            value={user.username}
-            onChange={handleChange}
-          />
-        </Form.Group>
+      <FormContainer>
+        <h2>User Settings</h2>
+        {error && <Message variant="danger">{error}</Message>}
+        {updateError && <Message variant="danger">{updateError}</Message>}
+        {successMessage && <Message variant="success">Profile Updated</Message>}
+        {loading && <Loader />}
 
-        <Form.Group>
-          <Form.Label>Email Address</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            value={user.email}
-            onChange={handleChange}
-          ></Form.Control>
-        </Form.Group>
+        <Form>
+          <Form.Group>
+            <Form.Label>Name</Form.Label>
+            <Form.Control
+              type="text"
+              name="name"
+              value={user.name}
+              onChange={handleChange}
+            />
+          </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            placeholder="Enter password"
-            value={user.password}
-            onChange={handleChange}
-          ></Form.Control>
-        </Form.Group>
+          <Form.Group>
+            <Form.Label>Username</Form.Label>
+            <Form.Control
+              type="text"
+              name="username"
+              value={user.username}
+              onChange={handleChange}
+            />
+          </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Confirm Password</Form.Label>
-          <Form.Control
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm password"
-            value={user.confirmPassword}
-            onChange={handleChange}
-          ></Form.Control>
-        </Form.Group>
-        {message && <Message variant="danger">{message}</Message>}
+          <Form.Group>
+            <Form.Label>Email Address</Form.Label>
+            <Form.Control
+              type="email"
+              name="email"
+              value={user.email}
+              onChange={handleChange}
+            ></Form.Control>
+          </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Phone Number</Form.Label>
-          <Form.Control
-            onChange={handleChange}
-            name="phoneNumber"
-            type="text"
-            value={user.phoneNumber}
-          />
-        </Form.Group>
+          <Form.Group>
+            <Form.Label>Password</Form.Label>
+            <Form.Control
+              type="password"
+              name="password"
+              placeholder="Enter password"
+              value={user.password}
+              onChange={handleChange}
+            ></Form.Control>
+          </Form.Group>
 
-        <Button type="submit" variant="primary" onClick={submitHandler}>
-          Update
-        </Button>
-      </Form>
-    </FormContainer>
+          <Form.Group>
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm password"
+              value={user.confirmPassword}
+              onChange={handleChange}
+            ></Form.Control>
+          </Form.Group>
+          {message && <Message variant="danger">{message}</Message>}
+
+          <Form.Group>
+            <Form.Label>Phone Number</Form.Label>
+            <Form.Control
+              onChange={handleChange}
+              name="phoneNumber"
+              type="text"
+              value={user.phoneNumber}
+            />
+          </Form.Group>
+
+          <Button type="submit" variant="primary" onClick={submitHandler}>
+            Update
+          </Button>
+        </Form>
+      </FormContainer>
+    </div>
   );
 };
 

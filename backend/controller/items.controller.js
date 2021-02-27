@@ -2,7 +2,6 @@ const _ = require("lodash");
 const Item = require("../models/items.model");
 const User = require("../models/users.model");
 const asyncHandler = require("express-async-handler");
-const { pick } = require("lodash");
 
 // @desc Create a new Item
 // @route POST /api/items/
@@ -38,6 +37,7 @@ const createItem = asyncHandler(async (req, res) => {
     );
     res.status(200).json(item);
   } else {
+    res.status(400);
     throw new Error("Invalid item data");
   }
 });
@@ -75,7 +75,7 @@ const favoriteItem = asyncHandler(async (req, res) => {
       {
         $push: {
           favorites: {
-            ...pick(item, ["_id", "id", "name", "quantity", "image"]),
+            ..._.pick(item, ["_id", "id", "name", "quantity", "image"]),
           },
         },
       },

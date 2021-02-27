@@ -23,7 +23,7 @@ function Header({ mode }) {
             <Nav className="ml-auto">
               <DarkModeButton mode={mode} />
               <Nav.Link href="/">Home</Nav.Link>
-              <Nav.Link href="/shops">Shops</Nav.Link>
+              <Nav.Link href="/stores">Stores</Nav.Link>
               <Nav.Link href="/items">Items</Nav.Link>
               {userInfo ? (
                 <NavDropdown
