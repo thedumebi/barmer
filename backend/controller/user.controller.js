@@ -8,14 +8,25 @@ const User = require("../models/users.model");
 const authUser = asyncHandler(async (req, res) => {
   const { input, password } = req.body;
   const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-  const usernameRegex = /^[a-zA-Z][\w-]+$/;
+  const usernameRegex = /^[a-zA-Z][\w-]+$|^@[a-zA-Z0-9]*/;
   let criteria;
   if (emailRegex.test(input)) {
     criteria = { email: input };
   } else if (usernameRegex.test(input)) {
-    criteria = {
-      username: { $regex: new RegExp(`^${input}$`), $options: "i" },
-    };
+    if (input.startsWith("@")) {
+      criteria = {
+        username: {
+          $regex: new RegExp(`^${input.slice(1, input.length + 1)}$`),
+          $options: "i",
+        },
+      };
+    } else {
+      criteria = {
+        username: { $regex: new RegExp(`^${input}$`), $options: "i" },
+      };
+    }
+  } else {
+    criteria = { email: null };
   }
 
   const user = await User.findOne(criteria);
@@ -38,6 +49,9 @@ const authUser = asyncHandler(async (req, res) => {
     } else if (criteria.username) {
       res.status(401);
       throw new Error("Invalid username");
+    } else {
+      res.status(401);
+      throw new Error("No valid input");
     }
   }
 });
@@ -56,7 +70,6 @@ const registerUser = asyncHandler(async (req, res) => {
   }
   const users = await User.find();
   users.map((user) => {
-    console.log(user);
     if (user.username.toLowerCase() === req.body.username.toLowerCase()) {
       res.status(400);
       throw new Error("Sorry, that username is taken");
