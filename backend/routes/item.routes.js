@@ -9,11 +9,16 @@ const {
   unfavoriteItem,
   addItem,
   removeItem,
+  deleteItem,
 } = require("../controller/items.controller");
 const { protect } = require("../middleware/auth.middleware");
 
 router.route("/").get(getItems).post(protect, createItem);
-router.route("/:id").get(getItemById).patch(protect, updateItem);
+router
+  .route("/:id")
+  .get(getItemById)
+  .patch(protect, updateItem)
+  .delete(protect, deleteItem);
 router.post("/:id/favorite", protect, favoriteItem);
 router.post("/:id/unfavorite", protect, unfavoriteItem);
 router.post("/:id/add", protect, addItem);

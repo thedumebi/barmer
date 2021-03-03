@@ -12,7 +12,9 @@ const createStore = asyncHandler(async (req, res) => {
   const user = await User.findById(ownerId);
   const [lastStore] = await Store.find().sort({ created_at: -1 });
 
-  if (user.stores.some((store) => store.name === name)) {
+  if (
+    user.stores.some((store) => store.name.toLowerCase() === name.toLowerCase())
+  ) {
     res.status(400);
     throw new Error("Sorry, you already have a store with that name");
   }
