@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { Form, Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import Message from "../components/Message";
@@ -28,9 +29,11 @@ const ItemEdit = ({ history, match }) => {
   const itemUpdate = useSelector((state) => state.itemUpdate);
   const { success, error: updateError } = itemUpdate;
 
+  const [uploadError, setUploadError] = useState(null);
+
   useEffect(() => {
     if (!userInfo) {
-      history.push("/login?redirect=/items/newitem");
+      history.push(`/login?redirect=/item/${match.params.id}/edit`);
     } else {
       if (success) {
         setSuccessMessage(success);
@@ -59,12 +62,40 @@ const ItemEdit = ({ history, match }) => {
     });
   };
 
+  const uploadFileHandler = async (event) => {
+    const { name, files } = event.target;
+    const file = files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+    formData.append("itemId", item._id);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.post("/api/upload", formData, config);
+
+      setItem((prevValue) => {
+        return { ...prevValue, [name]: data };
+      });
+      setUploadError(null);
+    } catch (error) {
+      setUploadError(error.message);
+    }
+  };
+
   const submitHandler = (event) => {
-    if (itemDetail.name === item.name) {
-      const { name, ...otherfields } = item;
-      dispatch(updateItem(otherfields));
-    } else {
-      dispatch(updateItem(item));
+    if (uploadError === null) {
+      if (itemDetail.name === item.name) {
+        const { name, ...otherfields } = item;
+        dispatch(updateItem(otherfields));
+      } else {
+        dispatch(updateItem(item));
+      }
     }
     event.preventDefault();
   };
@@ -80,7 +111,7 @@ const ItemEdit = ({ history, match }) => {
         {loading && <Loader />}
         {error && <Message variant="danger">{error}</Message>}
         {updateError && <Message variant="danger">{updateError}</Message>}
-        {successMessage && <Message variant="success">Store Updated</Message>}
+        {successMessage && <Message variant="success">Item Updated</Message>}
 
         <Form>
           <Form.Group>
@@ -95,14 +126,15 @@ const ItemEdit = ({ history, match }) => {
           </Form.Group>
 
           <Form.Group>
-            <Form.Label>Quantity</Form.Label>
-            <Form.Control
-              type="number"
-              onChange={handleChange}
-              name="quantity"
-              value={item.quantity}
-              placeholder="Number of Item."
+            <Form.Label>Item Image</Form.Label>
+            <Form.Control type="text" value={item.image} readOnly />
+            <Form.File
+              name="image"
+              label="Choose Image"
+              custom
+              onChange={uploadFileHandler}
             />
+            {uploadError && <Message variant="danger">{uploadError}</Message>}
           </Form.Group>
 
           <Button type="submit" variant="primary" onClick={submitHandler}>

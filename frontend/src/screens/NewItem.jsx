@@ -6,8 +6,10 @@ import Loader from "../components/Loader";
 import { Button, Form } from "react-bootstrap";
 import { createItem } from "../actions/item.actions";
 import { CREATE_ITEM_RESET } from "../constants/item.constants";
+import axios from "axios";
+import { getStoreDetails } from "../actions/store.actions";
 
-const NewItem = ({ history }) => {
+const NewItem = ({ history, location }) => {
   const [item, setItem] = useState({
     name: "",
     image: "",
@@ -26,19 +28,24 @@ const NewItem = ({ history }) => {
   const storeDetails = useSelector((state) => state.storeDetails);
   const { store } = storeDetails;
 
+  const [uploadError, setUploadError] = useState(null);
+
   useEffect(() => {
     if (!userInfo) {
       history.push("/login?redirect=/newitem");
     } else {
+      if (!store) {
+        dispatch(getStoreDetails(location.search.split("=")[1]));
+      }
       dispatch({ type: CREATE_ITEM_RESET });
       setItem((prevValues) => {
-        return { ...prevValues, storeId: store._id };
+        return { ...prevValues, storeId: store && store._id };
       });
       if (status) {
-        history.push(`/stores/${store._id}`);
+        history.push(`/store/${store._id}`);
       }
     }
-  }, [history, dispatch, status, userInfo, store]);
+  }, [history, dispatch, status, userInfo, store, location]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -47,8 +54,35 @@ const NewItem = ({ history }) => {
     });
   };
 
+  const uploadFileHandler = async (event) => {
+    const { name, files } = event.target;
+    const file = files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const config = {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.post("/api/upload", formData, config);
+
+      setItem((prevValue) => {
+        return { ...prevValue, [name]: data };
+      });
+      setUploadError(null);
+    } catch (error) {
+      setUploadError(error.message);
+    }
+  };
+
   const submitHandler = (event) => {
-    dispatch(createItem(item));
+    if (uploadError === null) {
+      dispatch(createItem(item));
+    }
     event.preventDefault();
   };
 
@@ -83,6 +117,18 @@ const NewItem = ({ history }) => {
               value={item.quantity}
               placeholder="Number of Item."
             />
+          </Form.Group>
+
+          <Form.Group>
+            <Form.Label>Item Image</Form.Label>
+            <Form.Control type="text" value={item.image} readOnly />
+            <Form.File
+              name="image"
+              label="Choose Image"
+              custom
+              onChange={uploadFileHandler}
+            />
+            {uploadError && <Message variant="danger">{uploadError}</Message>}
           </Form.Group>
 
           <Button type="submit" variant="primary" onClick={submitHandler}>

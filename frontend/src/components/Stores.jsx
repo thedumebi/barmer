@@ -62,13 +62,22 @@ const Stores = ({ store }) => {
         </Link>
       )}
 
-      {store.owner && userInfo && userInfo._id === store.owner._id && (
-        <Link to={`/items/newitem`}>
-          <Button className="btn-dark" type="button">
-            Add a new item
-          </Button>
-        </Link>
-      )}
+      {store.owner &&
+        userInfo &&
+        userInfo._id === store.owner._id &&
+        url.path === "/store/:id" && (
+          <Link
+            to={
+              url.path === "/stores"
+                ? `/items/newitem?store=${store._id}`
+                : `/items/newitem`
+            }
+          >
+            <Button className="btn-dark" type="button">
+              Add a new item
+            </Button>
+          </Link>
+        )}
     </div>
   );
 };

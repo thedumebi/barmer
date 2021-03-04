@@ -68,7 +68,7 @@ const RegisterStore = ({ history }) => {
               name="name"
               value={shop.name}
               onChange={handleChange}
-              placeholder="Name of Shop"
+              placeholder="Name of Store"
             />
           </Form.Group>
 
@@ -107,7 +107,7 @@ const RegisterStore = ({ history }) => {
           </Form.Group>
 
           <Button type="submit" variant="primary" onClick={submitHandler}>
-            Create Shop
+            Create Store
           </Button>
         </Form>
       </FormContainer>

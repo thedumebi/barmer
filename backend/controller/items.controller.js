@@ -58,13 +58,15 @@ const updateItem = asyncHandler(async (req, res) => {
   const { _id, storeId, ...update } = req.body;
 
   const store = await Store.findById(storeId);
-  if (
-    store.items.some(
-      (item) => item.name.toLowerCase() === update.name.toLowerCase()
-    )
-  ) {
-    res.status(400);
-    throw new Error("Sorry, you already have an item with that name");
+  if (update.name) {
+    if (
+      store.items.some(
+        (item) => item.name.toLowerCase() === update.name.toLowerCase()
+      )
+    ) {
+      res.status(400);
+      throw new Error("Sorry, you already have an item with that name");
+    }
   }
 
   const item = await Item.findByIdAndUpdate(
@@ -80,7 +82,7 @@ const updateItem = asyncHandler(async (req, res) => {
     });
 
     await Store.updateOne(
-      { _id: item.owner._id, items: { $elemMatch: { _id: item._id } } },
+      { _id: item.store._id, items: { $elemMatch: { _id: item._id } } },
       { $set: set }
     );
     res.status(200).json(item);

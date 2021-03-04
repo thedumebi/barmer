@@ -75,9 +75,15 @@ const updateStore = asyncHandler(async (req, res) => {
   const { _id, ownerId, ...update } = req.body;
 
   const user = await User.findById(ownerId);
-  if (user.stores.some((store) => store.name === update.name)) {
-    res.status(400);
-    throw new Error("Sorry, you already have a store with that name");
+  if (update.name) {
+    if (
+      user.stores.some(
+        (store) => store.name.toLowerCase() === update.name.toLowerCase()
+      )
+    ) {
+      res.status(400);
+      throw new Error("Sorry, you already have a store with that name");
+    }
   }
 
   const store = await Store.findByIdAndUpdate(

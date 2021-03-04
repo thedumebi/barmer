@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
-import { Button } from "react-bootstrap";
+import { Button, Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteItem } from "../actions/item.actions";
 
@@ -25,9 +25,12 @@ const Items = ({ item }) => {
   return (
     <div className="case">
       {item.image && (
-        <div className="heading">
+        <div
+          className="heading"
+          style={{ height: url.path === "/item/:id" && "auto" }}
+        >
           <Link to={`/item/${item._id}`}>
-            <img src={item.image} alt={item.name} />
+            <Image src={`/${item.image}`} alt={item.name} />
           </Link>
         </div>
       )}
@@ -50,21 +53,24 @@ const Items = ({ item }) => {
         </>
       )}
 
-      {item._id && url.path !== "/item/:id" && (
+      {item._id && url.path === "/items" && (
         <Link to={`/item/${item._id}`}>
-          <Button classname="btn-dark" type="button">
+          <Button className="btn-dark" type="button">
             View Item
           </Button>
         </Link>
       )}
 
-      {item.store && userInfo && userInfo._id === item.store.owner._id && (
-        <Link to={`/item/${item._id}/quantity`}>
-          <Button className="btn-dark" type="button">
-            Add/Remove
-          </Button>
-        </Link>
-      )}
+      {item.store &&
+        userInfo &&
+        userInfo._id === item.store.owner._id &&
+        url.path === "/item/:id" && (
+          <Link to={`/item/${item._id}/quantity`}>
+            <Button className="btn-dark" type="button">
+              Add/Remove
+            </Button>
+          </Link>
+        )}
     </div>
   );
 };

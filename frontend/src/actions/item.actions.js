@@ -65,7 +65,6 @@ export const getItemDetails = (id) => async (dispatch) => {
     dispatch({ type: ITEM_DETAILS_REQUEST });
 
     const { data } = await axios.get(`/api/items/${id}`);
-    console.log(data);
 
     dispatch({ type: ITEM_DETAILS_SUCCESS, payload: data });
   } catch (error) {

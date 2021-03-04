@@ -1,7 +1,11 @@
 const path = require("path");
+const fs = require("fs");
 const express = require("express");
 const multer = require("multer");
 const jimp = require("jimp");
+const Item = require("../models/items.model");
+const { protect } = require("../middleware/auth.middleware");
+const asyncHandler = require("express-async-handler");
 
 const router = express.Router();
 
@@ -18,7 +22,7 @@ const storage = multer.diskStorage({
 });
 
 function checkFileType(file, cb) {
-  const filetypes = /jpeg|jpeg|png/;
+  const filetypes = /jpg|jpeg|png/;
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
   const mimetype = filetypes.test(file.mimetype);
 
@@ -31,13 +35,33 @@ function checkFileType(file, cb) {
 
 const upload = multer({
   storage,
+  limits: { fileSize: 1024 * 1024 * 5 },
   fileFilter: function (req, file, cb) {
     checkFileType(file, cb);
   },
-});
+}).single("image");
 
-router.post("/", upload.single("image"), async (req, res) => {
-  res.send(`${req.file.path}`);
-});
+router.post(
+  "/",
+  protect,
+  asyncHandler(async (req, res) => {
+    upload(req, res, async (err) => {
+      if (err instanceof multer.MulterError) {
+        return res.end(err);
+      } else if (err) {
+        return res.end(err);
+      } else {
+        if (req.body.itemId) {
+          const item = await Item.findById(req.body.itemId);
+          if (item.image !== "") {
+            fs.unlinkSync(item.image);
+          }
+        }
+
+        res.send(`${req.file.path}`);
+      }
+    });
+  })
+);
 
 module.exports = router;

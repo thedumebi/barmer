@@ -21,8 +21,6 @@ const Item = ({ history, match }) => {
     setItem({ ...itemDetail });
   }, [dispatch, match, itemDetail]);
 
-  console.log(item);
-
   return (
     <div>
       <Button className="btn btn-dark my-3" onClick={() => history.goBack()}>

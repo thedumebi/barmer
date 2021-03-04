@@ -80,7 +80,7 @@ const Profile = ({ history }) => {
         </div>
       )}
       <Link className="btn btn-dark my-3" to="/registerstore">
-        New Shop
+        New Store
       </Link>
     </div>
   );

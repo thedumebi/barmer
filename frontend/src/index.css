@@ -93,6 +93,10 @@ hr {
   background-color: #f5f5f5;
 }
 
+.case img {
+  object-fit: contain;
+}
+
 .case .content {
   padding: 2%;
   height: 150px;

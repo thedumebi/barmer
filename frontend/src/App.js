@@ -67,6 +67,7 @@ const App = () => {
           <Route exact path="/store/:id" component={Store} />
           <Route exact path="/store/:id/edit" component={StoreEdit} />
           <Route exact path="/items" component={ItemsList} />
+          <Route exact path="/items/newitem?store=:id" component={NewItem} />
           <Route exact path="/items/newitem" component={NewItem} />
           <Route exact path="/item/:id" component={Item} />
           <Route exact path="/item/:id/edit" component={ItemEdit} />
