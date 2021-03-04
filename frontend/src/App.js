@@ -11,6 +11,10 @@ import RegisterStore from "./screens/RegisterStore";
 import Store from "./screens/Store";
 import StoresList from "./screens/StoresList";
 import StoreEdit from "./screens/StoreEditScreen";
+import ItemsList from "./screens/ItemsList";
+import Item from "./screens/Item";
+import NewItem from "./screens/NewItem";
+import ItemEdit from "./screens/ItemEditScreen";
 
 const App = () => {
   const getCookie = (name) => {
@@ -62,6 +66,10 @@ const App = () => {
           <Route exact path="/stores" component={StoresList} />
           <Route exact path="/store/:id" component={Store} />
           <Route exact path="/store/:id/edit" component={StoreEdit} />
+          <Route exact path="/items" component={ItemsList} />
+          <Route exact path="/items/newitem" component={NewItem} />
+          <Route exact path="/item/:id" component={Item} />
+          <Route exact path="/item/:id/edit" component={ItemEdit} />
           <Route exact path="/settings" component={Settings} />
         </Container>
       </main>

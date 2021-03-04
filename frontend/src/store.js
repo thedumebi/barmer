@@ -17,6 +17,15 @@ import {
   storeListReducer,
   storeUpdateReducer,
 } from "./reducers/store.reducers";
+import {
+  addToItemReducer,
+  createItemReducer,
+  itemDeleteReducer,
+  itemDetailsReducer,
+  itemListReducer,
+  itemUpdateReducer,
+  removeFromItemReducer,
+} from "./reducers/item.reducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -31,6 +40,13 @@ const reducer = combineReducers({
   storeList: storeListReducer,
   storeUpdate: storeUpdateReducer,
   storeDelete: storeDeleteReducer,
+  createItem: createItemReducer,
+  itemDetails: itemDetailsReducer,
+  itemList: itemListReducer,
+  itemUpdate: itemUpdateReducer,
+  itemDelete: itemDeleteReducer,
+  itemAdd: addToItemReducer,
+  itemRemove: removeFromItemReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getStores } from "../actions/store.actions";
+import { getItems } from "../actions/item.actions";
 import { Button, Col, Row } from "react-bootstrap";
 import Loader from "../components/Loader";
 import Message from "../components/Message";
-import Stores from "../components/Stores";
+import Items from "../components/Items";
 
-const StoresList = ({ history }) => {
-  const [stores, setStores] = useState([]);
+const ItemsList = ({ history }) => {
+  const [items, setItems] = useState([]);
   const dispatch = useDispatch();
 
-  const storesList = useSelector((state) => state.storeList);
-  const { loading, error, stores: storeList } = storesList;
+  const itemsList = useSelector((state) => state.itemList);
+  const { loading, error, items: itemList } = itemsList;
 
   useEffect(() => {
-    if (!storeList) {
-      dispatch(getStores());
+    if (!itemList) {
+      dispatch(getItems());
     }
-    setStores(storeList);
-  }, [dispatch, storeList]);
+    setItems(itemList);
+  }, [dispatch, itemList]);
 
   return (
     <div>
@@ -31,15 +31,15 @@ const StoresList = ({ history }) => {
         <Message variant="danger">{error}</Message>
       ) : (
         <>
-          {stores && stores.length === 0 ? (
-            <h1 className="big-heading">Stores are coming soon ;)</h1>
+          {items && items.length === 0 ? (
+            <h1 className="big-heading">Items are coming soon ;)</h1>
           ) : (
             <Row>
-              {stores &&
-                stores.map((store) => {
+              {items &&
+                items.map((item) => {
                   return (
-                    <Col lg={4} key={store._id}>
-                      <Stores store={store} />
+                    <Col lg={4} key={item._id}>
+                      <Items item={item} />
                     </Col>
                   );
                 })}
@@ -51,4 +51,4 @@ const StoresList = ({ history }) => {
   );
 };
 
-export default StoresList;
+export default ItemsList;

@@ -8,7 +8,7 @@ import { deleteStore } from "../actions/store.actions";
 const Stores = ({ store }) => {
   const url = useRouteMatch();
   const history = useHistory();
-  console.log(store);
+
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -16,7 +16,7 @@ const Stores = ({ store }) => {
 
   const deleteHandler = (event) => {
     if (window.confirm("This is an irreversible act. Are you sure?")) {
-      if (window.confirm("Last warning. Delete?")) {
+      if (window.confirm("LAST WARNING, DELETE STORE?")) {
         dispatch(deleteStore(store._id));
         history.push("/profile");
       }
@@ -63,7 +63,7 @@ const Stores = ({ store }) => {
       )}
 
       {store.owner && userInfo && userInfo._id === store.owner._id && (
-        <Link to={`/items/additem`}>
+        <Link to={`/items/newitem`}>
           <Button className="btn-dark" type="button">
             Add a new item
           </Button>

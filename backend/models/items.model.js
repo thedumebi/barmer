@@ -9,7 +9,7 @@ const itemSchema = new mongoose.Schema({
   name: String,
   image: String,
   quantity: Number,
-  owner: Object,
+  store: Object,
   created_at: {
     type: Date,
     default: Date.now(),

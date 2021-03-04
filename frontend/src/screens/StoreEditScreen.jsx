@@ -31,7 +31,7 @@ const StoreEdit = ({ history, match }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push("/login?redirect=/items/additem");
+      history.push(`/login?redirect=/store/${match.params.id}/edit`);
     } else {
       if (success) {
         setSuccessMessage(success);

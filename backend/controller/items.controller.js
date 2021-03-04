@@ -7,10 +7,10 @@ const asyncHandler = require("express-async-handler");
 // @route POST /api/items/
 // @access Private
 const createItem = asyncHandler(async (req, res) => {
-  const { name, image, quantity, shopId } = req.body;
+  const { name, image, quantity, storeId } = req.body;
 
   const [lastItem] = await Item.find().sort({ created_at: -1 });
-  const store = await Store.findById(shopId);
+  const store = await Store.findById(storeId);
 
   if (store.items.some((item) => item.name === name)) {
     res.status(400);
