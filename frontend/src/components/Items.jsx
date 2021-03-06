@@ -151,21 +151,16 @@ const Items = ({ item }) => {
               </>
             )}
 
-          {item._id && url.path === "/items" && (
-            <Link to={`/item/${item._id}`}>
-              <Button className="btn-dark" type="button">
-                View Item
-              </Button>
-            </Link>
-          )}
-
-          {item._id && url.path === "/store/:id" && (
-            <Link to={`/item/${item._id}`}>
-              <Button className="btn-dark" type="button">
-                View Item
-              </Button>
-            </Link>
-          )}
+          {item._id &&
+            (url.path === "/store/:id" ||
+              url.path === "/favorites" ||
+              url.path === "/items") && (
+              <Link to={`/item/${item._id}`}>
+                <Button className="btn-dark" type="button">
+                  View Item
+                </Button>
+              </Link>
+            )}
 
           {item.store &&
             userInfo &&

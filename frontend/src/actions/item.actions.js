@@ -293,6 +293,8 @@ export const favoriteItem = (id, userId) => async (dispatch, getState) => {
     });
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+
+    localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: ITEM_FAVORITE_FAIL,
@@ -331,6 +333,8 @@ export const unFavoriteItem = (id, userId) => async (dispatch, getState) => {
     });
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+
+    localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
     dispatch({
       type: ITEM_UNFAVORITE_FAIL,
