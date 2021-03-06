@@ -32,7 +32,10 @@ const Stores = ({ store }) => {
           </Link>
         </div>
       )}
-      <div className="content">
+      <div
+        className="content"
+        style={{ height: url.path === "/store/:id" && "auto" }}
+      >
         <h1 className="sub-heading">{store.name}</h1>
         <small>{store.category}</small>
         <p>Description: {store.description}</p>
@@ -40,19 +43,22 @@ const Stores = ({ store }) => {
           store.items.map((item) => <Items key={item.id} item={item} />)}
       </div>
 
-      {store._id && url.path === "/store/:id" && (
-        <Button className="btn-dark" type="button" onClick={deleteHandler}>
-          Delete Store
-        </Button>
-      )}
+      {store._id &&
+        url.path === "/store/:id" &&
+        userInfo &&
+        userInfo._id === store.owner._id && (
+          <>
+            <Button className="btn-dark" type="button" onClick={deleteHandler}>
+              Delete Store
+            </Button>
 
-      {store._id && url.path === "/store/:id" && (
-        <Link to={`/store/${store._id}/edit`}>
-          <Button className="btn-dark" type="button">
-            Edit Store
-          </Button>
-        </Link>
-      )}
+            <Link to={`/store/${store._id}/edit`}>
+              <Button className="btn-dark" type="button">
+                Edit Store
+              </Button>
+            </Link>
+          </>
+        )}
 
       {store._id && url.path !== "/store/:id" && (
         <Link to={`/store/${store._id}`}>

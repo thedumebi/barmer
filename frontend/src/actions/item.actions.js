@@ -21,7 +21,17 @@ import {
   ITEM_REMOVE_REQUEST,
   ITEM_REMOVE_SUCCESS,
   ITEM_REMOVE_FAIL,
+  ITEM_OF_THE_DAY_REQUEST,
+  ITEM_OF_THE_DAY_SUCCESS,
+  ITEM_OF_THE_DAY_FAIL,
+  ITEM_FAVORITE_REQUEST,
+  ITEM_FAVORITE_SUCCESS,
+  ITEM_FAVORITE_FAIL,
+  ITEM_UNFAVORITE_REQUEST,
+  ITEM_UNFAVORITE_SUCCESS,
+  ITEM_UNFAVORITE_FAIL,
 } from "../constants/item.constants";
+import { USER_LOGIN_SUCCESS } from "../constants/user.constants";
 import { getStoreDetails } from "./store.actions";
 
 export const createItem = (item) => async (dispatch, getState) => {
@@ -230,6 +240,100 @@ export const removeFromItem = (item) => async (dispatch, getState) => {
   } catch (error) {
     dispatch({
       type: ITEM_REMOVE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const getItemOfTheDay = () => async (dispatch) => {
+  try {
+    dispatch({ type: ITEM_OF_THE_DAY_REQUEST });
+
+    const { data } = await axios.get("/api/items/item");
+
+    dispatch({ type: ITEM_OF_THE_DAY_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ITEM_OF_THE_DAY_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const favoriteItem = (id, userId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ITEM_FAVORITE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `/api/items/${id}/favorite`,
+      { userId },
+      config
+    );
+
+    dispatch({
+      type: ITEM_FAVORITE_SUCCESS,
+      payload: data,
+    });
+
+    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ITEM_FAVORITE_FAIL,
+      payload:
+        error.response && error.response.data.message
+          ? error.response.data.message
+          : error.message,
+    });
+  }
+};
+
+export const unFavoriteItem = (id, userId) => async (dispatch, getState) => {
+  try {
+    dispatch({ type: ITEM_UNFAVORITE_REQUEST });
+
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.post(
+      `/api/items/${id}/unfavorite`,
+      { userId },
+      config
+    );
+
+    dispatch({
+      type: ITEM_UNFAVORITE_SUCCESS,
+      payload: data,
+    });
+
+    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
+  } catch (error) {
+    dispatch({
+      type: ITEM_UNFAVORITE_FAIL,
       payload:
         error.response && error.response.data.message
           ? error.response.data.message

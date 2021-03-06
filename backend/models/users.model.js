@@ -59,7 +59,7 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.pre("findOneAndUpdate", async function () {
-  if (this._update.$set.password) {
+  if (this._update.$set && this._update.$set.password) {
     const salt = await bcrypt.genSalt();
     this._update.$set.password = await bcrypt.hash(
       this._update.$set.password,

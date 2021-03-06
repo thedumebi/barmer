@@ -50,6 +50,9 @@ const StoreEdit = ({ history, match }) => {
             ownerId: userInfo._id,
           };
         });
+        if (userInfo._id !== storeDetail.owner._id) {
+          history.push("/profile");
+        }
       }
     }
   }, [dispatch, history, userInfo, storeDetail, success, match]);

@@ -44,6 +44,9 @@ const NewItem = ({ history, location }) => {
       if (status) {
         history.push(`/store/${store._id}`);
       }
+      if (userInfo._id !== store.owner._id) {
+        history.push("/profile");
+      }
     }
   }, [history, dispatch, status, userInfo, store, location]);
 

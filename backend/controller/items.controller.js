@@ -2,6 +2,8 @@ const _ = require("lodash");
 const Item = require("../models/items.model");
 const Store = require("../models/stores.model");
 const asyncHandler = require("express-async-handler");
+const User = require("../models/users.model");
+const generateToken = require("../utils/generateToken.utils");
 
 // @desc Create a new Item
 // @route POST /api/items/
@@ -99,7 +101,7 @@ const favoriteItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (item) {
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      req.body.userId,
       {
         $push: {
           favorites: {
@@ -109,7 +111,13 @@ const favoriteItem = asyncHandler(async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json(user);
+    if (user) {
+      const { password, ...otherKeys } = user._doc;
+      res.status(200).json({ ...otherKeys, token: generateToken(user._id) });
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
   } else {
     res.status(404);
     throw new Error("Item not found");
@@ -123,13 +131,19 @@ const unfavoriteItem = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id);
   if (item) {
     const user = await User.findByIdAndUpdate(
-      req.user._id,
+      req.body.userId,
       {
         $pull: { favorites: { _id: item._id } },
       },
       { new: true }
     );
-    res.status(200).json(user);
+    if (user) {
+      const { password, ...otherKeys } = user._doc;
+      res.status(200).json({ ...otherKeys, token: generateToken(user._id) });
+    } else {
+      res.status(404);
+      throw new Error("User not found");
+    }
   } else {
     res.status(404);
     throw new Error("Item not found");
@@ -227,6 +241,18 @@ const deleteItem = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get Item of the day
+// @route   GET /api/items/item
+// @access  Public
+const getItemOfTheDay = asyncHandler(async (req, res) => {
+  const items = await Item.find();
+  const msPerDay = 24 * 60 * 60 * 1000; //number of milliseconds in a day
+  let daysSinceEpoch = Math.floor(new Date().getTime() / msPerDay); //number of days since jan 1, 1970
+  let itemIndex = daysSinceEpoch % items.length;
+
+  res.status(200).json(items[itemIndex]);
+});
+
 module.exports = {
   createItem,
   updateItem,
@@ -237,4 +263,5 @@ module.exports = {
   getItems,
   getItemById,
   deleteItem,
+  getItemOfTheDay,
 };

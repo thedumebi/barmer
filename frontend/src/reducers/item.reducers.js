@@ -26,6 +26,15 @@ import {
   ITEM_REMOVE_SUCCESS,
   ITEM_REMOVE_FAIL,
   ITEM_REMOVE_RESET,
+  ITEM_OF_THE_DAY_REQUEST,
+  ITEM_OF_THE_DAY_SUCCESS,
+  ITEM_OF_THE_DAY_FAIL,
+  ITEM_FAVORITE_REQUEST,
+  ITEM_FAVORITE_SUCCESS,
+  ITEM_FAVORITE_FAIL,
+  ITEM_UNFAVORITE_REQUEST,
+  ITEM_UNFAVORITE_SUCCESS,
+  ITEM_UNFAVORITE_FAIL,
 } from "../constants/item.constants";
 
 export const createItemReducer = (state = {}, action) => {
@@ -126,6 +135,45 @@ export const removeFromItemReducer = (state = {}, action) => {
       return { loading: false, error: action.payload };
     case ITEM_REMOVE_RESET:
       return {};
+    default:
+      return state;
+  }
+};
+
+export const itemOfTheDayReducer = (state = [], action) => {
+  switch (action.type) {
+    case ITEM_OF_THE_DAY_REQUEST:
+      return { loading: true };
+    case ITEM_OF_THE_DAY_SUCCESS:
+      return { loadin: false, item: action.payload };
+    case ITEM_OF_THE_DAY_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const favoriteItemReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ITEM_FAVORITE_REQUEST:
+      return { loading: true };
+    case ITEM_FAVORITE_SUCCESS:
+      return { loading: false, success: true };
+    case ITEM_FAVORITE_FAIL:
+      return { loading: false, error: action.payload };
+    default:
+      return state;
+  }
+};
+
+export const unfavoriteItemReducer = (state = {}, action) => {
+  switch (action.type) {
+    case ITEM_UNFAVORITE_REQUEST:
+      return { loading: true };
+    case ITEM_UNFAVORITE_SUCCESS:
+      return { loading: false, success: true };
+    case ITEM_UNFAVORITE_FAIL:
+      return { loading: false, error: action.payload };
     default:
       return state;
   }

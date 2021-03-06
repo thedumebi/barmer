@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import Items from "../components/Items";
@@ -7,19 +7,16 @@ import { getItemDetails } from "../actions/item.actions";
 import { Button } from "react-bootstrap";
 
 const Item = ({ history, match }) => {
-  const [item, setItem] = useState({});
+  // const [item, setItem] = useState({});
 
   const dispatch = useDispatch();
 
   const itemDetails = useSelector((state) => state.itemDetails);
-  const { loading, error, item: itemDetail } = itemDetails;
+  const { loading, error, item } = itemDetails;
 
   useEffect(() => {
-    if (!itemDetail || !itemDetail.name) {
-      dispatch(getItemDetails(match.params.id));
-    }
-    setItem({ ...itemDetail });
-  }, [dispatch, match, itemDetail]);
+    dispatch(getItemDetails(match.params.id));
+  }, [dispatch, match]);
 
   return (
     <div>
@@ -31,7 +28,7 @@ const Item = ({ history, match }) => {
       ) : error ? (
         <Message variant="danger">{error}</Message>
       ) : (
-        <Items item={item} />
+        item && <Items item={item} />
       )}
     </div>
   );

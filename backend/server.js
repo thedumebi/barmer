@@ -7,6 +7,7 @@ const userRoutes = require("./routes/user.routes");
 const itemRoutes = require("./routes/item.routes");
 const storeRoutes = require("./routes/store.routes");
 const uploadRoutes = require("./routes/upload.routes");
+const carouselRoutes = require("./routes/carousel.routes");
 
 connectDB();
 
@@ -20,6 +21,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/stores", storeRoutes);
 app.use("/api/items", itemRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/carousel", carouselRoutes);
 
 //Make uploads folder static
 app.use("/backend/uploads", express.static(__dirname + "/uploads"));

@@ -17,7 +17,15 @@ function Header({ mode }) {
     <header>
       <Navbar collapseOnSelect bg="dark" variant="dark" expand="md">
         <Container>
-          <Navbar.Brand href="/">Barmer</Navbar.Brand>
+          <Navbar.Brand href="/">
+            <img
+              src="/barmer_logo.svg"
+              alt="Barmer"
+              width="40"
+              height="40"
+              className="d-inline-block"
+            />
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="ml-auto">
