@@ -130,11 +130,9 @@ const Items = ({ item }) => {
             !userInfo.favorites.includes(
               userInfo.favorites.find((el) => el._id === item._id)
             ) && (
-              <>
-                <Button className="btn-dark" onClick={favorite}>
-                  Favorite
-                </Button>
-              </>
+              <Button className="btn-dark" onClick={favorite}>
+                Favorite
+              </Button>
             )}
 
           {item._id &&
@@ -144,12 +142,26 @@ const Items = ({ item }) => {
             userInfo.favorites.includes(
               userInfo.favorites.find((el) => el._id === item._id)
             ) && (
-              <>
-                <Button className="btn-dark" onClick={unfavorite}>
-                  UnFavorite
-                </Button>
-              </>
+              <Button className="btn-dark" onClick={unfavorite}>
+                UnFavorite
+              </Button>
             )}
+
+          {item._id &&
+            url.path === "/item/:id" &&
+            userInfo &&
+            userInfo._id !== item.store.owner._id &&
+            !userInfo.outgoingRequests.includes(
+              userInfo.outgoingRequests.find((el) => el.id === item._id)
+            ) && <Button className="btn-dark">Make Request</Button>}
+
+          {item._id &&
+            url.path === "/item/:id" &&
+            userInfo &&
+            userInfo._id !== item.store.owner._id &&
+            userInfo.outgoingRequests.includes(
+              userInfo.outgoingRequests.find((el) => el.id === item._id)
+            ) && <Button className="btn-dark">Edit Request</Button>}
 
           {item._id &&
             (url.path === "/store/:id" ||

@@ -1,13 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
-
-const requestSchema = new mongoose.Schema({
-  name: String,
-  quantity: Number,
-  comment: String,
-  user: Object,
-  status: String,
-});
+const { requestSchema } = require("./request.model");
 
 const userSchema = new mongoose.Schema({
   id: {

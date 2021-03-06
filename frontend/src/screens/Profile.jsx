@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Row, Col } from "react-bootstrap";
+import React, { useEffect } from "react";
+import { Row, Col, Button } from "react-bootstrap";
 import Message from "../components/Message";
 import Loader from "../components/Loader";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,12 +8,10 @@ import { Link } from "react-router-dom";
 import Stores from "../components/Stores";
 
 const Profile = ({ history }) => {
-  const [user, setUser] = useState({});
-
   const dispatch = useDispatch();
 
   const userDetails = useSelector((state) => state.userDetails);
-  const { loading, error, user: userDetail } = userDetails;
+  const { loading, error, user } = userDetails;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -28,20 +26,15 @@ const Profile = ({ history }) => {
     if (!userInfo) {
       history.push("/login?redirect=/profile");
     } else {
-      if (!userDetail || !userDetail.name) {
-        dispatch(getUserDetails(userInfo._id));
-      }
-      setUser((prevValue) => {
-        return { ...prevValue, ...userDetail };
-      });
+      dispatch(getUserDetails(userInfo._id));
     }
-  }, [history, userInfo, dispatch, userDetail]);
+  }, [history, userInfo, dispatch]);
 
   return (
     <div>
-      <Link className="btn btn-dark my-3" to="/">
+      <Button className="btn btn-dark my-3" onClick={() => history.goBack()}>
         Back
-      </Link>
+      </Button>
       {loading ? (
         <Loader />
       ) : error ? (
@@ -65,17 +58,18 @@ const Profile = ({ history }) => {
         </>
       )}
       <hr />
-      {user.stores && (
+      {user && user.stores && (
         <div className="section">
           <h2>Manage Your Stores</h2>
           <Row>
-            {user.stores.map((store) => {
-              return (
-                <Col lg={4} key={store._id}>
-                  <Stores store={store} />
-                </Col>
-              );
-            })}
+            {user &&
+              user.stores.map((store) => {
+                return (
+                  <Col lg={4} key={store._id}>
+                    <Stores store={store} />
+                  </Col>
+                );
+              })}
           </Row>
         </div>
       )}

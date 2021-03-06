@@ -36,6 +36,16 @@ import {
   carouselUpdateReducer,
   createCarouselReducer,
 } from "./reducers/carousel.reducers";
+import {
+  createRequestReducer,
+  receivedRequestListReducer,
+  requestAcceptReducer,
+  requestDeleteReducer,
+  requestDetailsReducer,
+  requestRejectReducer,
+  requestUpdateReducer,
+  sentRequestListReducer,
+} from "./reducers/request.reducers";
 
 const reducer = combineReducers({
   userLogin: userLoginReducer,
@@ -65,6 +75,14 @@ const reducer = combineReducers({
   carouselDelete: carouselDeleteReducer,
   carouselDetails: carouselDetailsReducer,
   carouselUpate: carouselUpdateReducer,
+  createRequest: createRequestReducer,
+  requestDetails: requestDetailsReducer,
+  sentRequestList: sentRequestListReducer,
+  receivedRequestlist: receivedRequestListReducer,
+  requestUpdate: requestUpdateReducer,
+  requestDelete: requestDeleteReducer,
+  requestAccept: requestAcceptReducer,
+  requestReject: requestRejectReducer,
 });
 
 const userInfoFromStorage = localStorage.getItem("userInfo")

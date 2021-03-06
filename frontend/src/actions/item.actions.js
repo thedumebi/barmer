@@ -187,7 +187,7 @@ export const addToItem = (item) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.put(
+    const { data } = await axios.patch(
       `/api/items/${item._id}/add`,
       item,
       config
@@ -225,7 +225,7 @@ export const removeFromItem = (item) => async (dispatch, getState) => {
       },
     };
 
-    const { data } = await axios.put(
+    const { data } = await axios.patch(
       `/api/items/${item._id}/remove`,
       item,
       config
