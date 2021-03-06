@@ -4,7 +4,7 @@ import Footer from "./components/Footer";
 import Login from "./screens/Login";
 import Home from "./screens/Home";
 import { Container } from "react-bootstrap";
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Settings from "./screens/Settings";
 import Profile from "./screens/Profile";
 import RegisterStore from "./screens/RegisterStore";
@@ -16,6 +16,7 @@ import Item from "./screens/Item";
 import NewItem from "./screens/NewItem";
 import ItemEdit from "./screens/ItemEditScreen";
 import Favorites from "./screens/Favorites";
+import NotFound from "./screens/NotFound";
 
 const App = () => {
   const getCookie = (name) => {
@@ -59,21 +60,24 @@ const App = () => {
       <Header mode={theme} />
       <main className="py-3">
         <Container>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/register" component={Login} />
-          <Route exact path="/login" component={Login} />
-          <Route exact path="/profile" component={Profile} />
-          <Route exact path="/registerstore" component={RegisterStore} />
-          <Route exact path="/stores" component={StoresList} />
-          <Route exact path="/store/:id" component={Store} />
-          <Route exact path="/store/:id/edit" component={StoreEdit} />
-          <Route exact path="/items" component={ItemsList} />
-          <Route exact path="/items/newitem?store=:id" component={NewItem} />
-          <Route exact path="/items/newitem" component={NewItem} />
-          <Route exact path="/item/:id" component={Item} />
-          <Route exact path="/item/:id/edit" component={ItemEdit} />
-          <Route exact path="/favorites" component={Favorites} />
-          <Route exact path="/settings" component={Settings} />
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/register" component={Login} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/profile" component={Profile} />
+            <Route exact path="/registerstore" component={RegisterStore} />
+            <Route exact path="/stores" component={StoresList} />
+            <Route exact path="/store/:id" component={Store} />
+            <Route exact path="/store/:id/edit" component={StoreEdit} />
+            <Route exact path="/items" component={ItemsList} />
+            <Route exact path="/items/newitem?store=:id" component={NewItem} />
+            <Route exact path="/items/newitem" component={NewItem} />
+            <Route exact path="/item/:id" component={Item} />
+            <Route exact path="/item/:id/edit" component={ItemEdit} />
+            <Route exact path="/favorites" component={Favorites} />
+            <Route exact path="/settings" component={Settings} />
+            <Route component={NotFound} />
+          </Switch>
         </Container>
       </main>
       <Footer />
