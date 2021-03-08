@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, useHistory, useRouteMatch } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, Route, useHistory, useRouteMatch } from "react-router-dom";
 import { Button, Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -8,6 +8,8 @@ import {
   unFavoriteItem,
 } from "../actions/item.actions";
 import Message from "../components/Message";
+import Request from "./Request";
+import { getUserDetails } from "../actions/user.actions";
 
 const Items = ({ item }) => {
   const url = useRouteMatch();
@@ -16,7 +18,16 @@ const Items = ({ item }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const userDetails = useSelector((state) => state.userDetails);
+  const { user } = userDetails;
+
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!user) {
+      dispatch(getUserDetails(userInfo._id));
+    }
+  }, [user, dispatch, userInfo]);
 
   const deleteHandler = () => {
     if (window.confirm("This is an ireversible act. Are you sure?")) {
@@ -28,11 +39,11 @@ const Items = ({ item }) => {
   };
 
   const favorite = () => {
-    dispatch(favoriteItem(item._id, userInfo._id));
+    dispatch(favoriteItem(item._id, user._id));
   };
 
   const unfavorite = () => {
-    dispatch(unFavoriteItem(item._id, userInfo._id));
+    dispatch(unFavoriteItem(item._id, user._id));
   };
 
   const [overlay, setOverlay] = useState({
@@ -103,10 +114,20 @@ const Items = ({ item }) => {
             <p>There are {item.quantity} left in stock</p>
           </div>
 
+          <hr />
+
+          <Route exact path={`${url.path}/request`}>
+            <Request item={item} user={user && user} />
+          </Route>
+
+          <Route exact path={`${url.path}/edit-request`}>
+            <Request item={item} user={user && user} />
+          </Route>
+
           {item._id &&
             url.path === "/item/:id" &&
-            userInfo &&
-            userInfo._id === item.store.owner._id && (
+            user &&
+            user._id === item.store.owner._id && (
               <>
                 <Link to={`/item/${item._id}/edit`}>
                   <Button className="btn-dark" type="button">
@@ -125,10 +146,10 @@ const Items = ({ item }) => {
 
           {item._id &&
             url.path === "/item/:id" &&
-            userInfo &&
-            userInfo._id !== item.store.owner._id &&
-            !userInfo.favorites.includes(
-              userInfo.favorites.find((el) => el._id === item._id)
+            user &&
+            user._id !== item.store.owner._id &&
+            !user.favorites.includes(
+              user.favorites.find((el) => el._id === item._id)
             ) && (
               <Button className="btn-dark" onClick={favorite}>
                 Favorite
@@ -137,10 +158,10 @@ const Items = ({ item }) => {
 
           {item._id &&
             url.path === "/item/:id" &&
-            userInfo &&
-            userInfo._id !== item.store.owner._id &&
-            userInfo.favorites.includes(
-              userInfo.favorites.find((el) => el._id === item._id)
+            user &&
+            user._id !== item.store.owner._id &&
+            user.favorites.includes(
+              user.favorites.find((el) => el._id === item._id)
             ) && (
               <Button className="btn-dark" onClick={unfavorite}>
                 UnFavorite
@@ -149,19 +170,27 @@ const Items = ({ item }) => {
 
           {item._id &&
             url.path === "/item/:id" &&
-            userInfo &&
-            userInfo._id !== item.store.owner._id &&
-            !userInfo.outgoingRequests.includes(
-              userInfo.outgoingRequests.find((el) => el.id === item._id)
-            ) && <Button className="btn-dark">Make Request</Button>}
+            user &&
+            user._id !== item.store.owner._id &&
+            !user.outgoingRequests.includes(
+              user.outgoingRequests.find((el) => el.item._id === item._id)
+            ) && (
+              <Link to={`${url.url}/request`}>
+                <Button className="btn-dark">Make Request</Button>
+              </Link>
+            )}
 
           {item._id &&
             url.path === "/item/:id" &&
-            userInfo &&
-            userInfo._id !== item.store.owner._id &&
-            userInfo.outgoingRequests.includes(
-              userInfo.outgoingRequests.find((el) => el.id === item._id)
-            ) && <Button className="btn-dark">Edit Request</Button>}
+            user &&
+            user._id !== item.store.owner._id &&
+            user.outgoingRequests.includes(
+              user.outgoingRequests.find((el) => el.item._id === item._id)
+            ) && (
+              <Link to={`${url.url}/edit-request`}>
+                <Button className="btn-dark">Edit Request</Button>
+              </Link>
+            )}
 
           {item._id &&
             (url.path === "/store/:id" ||
@@ -175,8 +204,8 @@ const Items = ({ item }) => {
             )}
 
           {item.store &&
-            userInfo &&
-            userInfo._id === item.store.owner._id &&
+            user &&
+            user._id === item.store.owner._id &&
             url.path === "/item/:id" && (
               <Link to={`/item/${item._id}/quantity`}>
                 <Button className="btn-dark" type="button">

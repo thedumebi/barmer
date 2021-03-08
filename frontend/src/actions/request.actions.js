@@ -49,9 +49,7 @@ export const createRequest = (request) => async (dispatch, getState) => {
       type: REQUEST_CREATE_SUCCESS,
     });
 
-    dispatch({ tpe: USER_LOGIN_SUCCESS, payload: data });
-
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    dispatch(getUserDetails(data.swapItem.store.owner._id));
   } catch (error) {
     dispatch({
       type: REQUEST_CREATE_FAIL,
@@ -63,11 +61,21 @@ export const createRequest = (request) => async (dispatch, getState) => {
   }
 };
 
-export const getSentRequests = () => async (dispatch) => {
+export const getSentRequests = () => async (dispatch, getState) => {
   try {
     dispatch({ type: SENT_REQUEST_LIST_REQUEST });
 
-    const { data } = await axios.get("/api/requests/sent");
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get("/api/requests/sent", config);
 
     dispatch({ type: SENT_REQUEST_LIST_SUCCESS, payload: data });
   } catch (error) {
@@ -81,11 +89,21 @@ export const getSentRequests = () => async (dispatch) => {
   }
 };
 
-export const getReceivedRequests = () => async (dispatch) => {
+export const getReceivedRequests = () => async (dispatch, getState) => {
   try {
     dispatch({ type: RECEIVED_REQUEST_LIST_REQUEST });
 
-    const { data } = await axios.get("/api/requests/received");
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get("/api/requests/received", config);
 
     dispatch({ type: RECEIVED_REQUEST_LIST_SUCCESS, payload: data });
   } catch (error) {
@@ -99,11 +117,21 @@ export const getReceivedRequests = () => async (dispatch) => {
   }
 };
 
-export const getRequestDetails = (id) => async (dispatch) => {
+export const getRequestDetails = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: REQUEST_DETAILS_REQUEST });
 
-    const { data } = await axios.get(`/api/requests/${id}`);
+    const {
+      userLogin: { userInfo },
+    } = getState();
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${userInfo.token}`,
+      },
+    };
+
+    const { data } = await axios.get(`/api/requests/${id}`, config);
 
     dispatch({ type: REQUEST_DETAILS_SUCCESS, payload: data });
   } catch (error) {
@@ -140,9 +168,7 @@ export const updateRequest = (request) => async (dispatch, getState) => {
 
     dispatch({ type: REQUEST_UPDATE_SUCCESS });
 
-    dispatch({ tpe: USER_LOGIN_SUCCESS, payload: data });
-
-    localStorage.setItem("userInfo", JSON.stringify(data));
+    dispatch(getUserDetails(data.swapItem.store.owner._id));
   } catch (error) {
     dispatch({
       type: REQUEST_UPDATE_FAIL,

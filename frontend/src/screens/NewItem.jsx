@@ -14,7 +14,7 @@ const NewItem = ({ history, location }) => {
     name: "",
     image: "",
     quantity: "",
-    shopId: "",
+    storeId: "",
   });
 
   const dispatch = useDispatch();

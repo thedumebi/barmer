@@ -3,40 +3,48 @@ const { Request } = require("../models/request.model");
 const User = require("../models/users.model");
 const asyncHandler = require("express-async-handler");
 const generateToken = require("../utils/generateToken.utils");
+const Item = require("../models/items.model");
 
 // @desc Create a new request
 // @route POST /api/requests/
 // @access Private
 const createRequest = asyncHandler(async (req, res) => {
   const requestExists = await Request.findOne({
-    "item._id": req.body.item._id,
-    "swapItem._id": req.body.swapItem._id,
+    "item._id": req.body.itemId,
+    "swapItem._id": req.body.swapItemId,
   });
   if (requestExists) {
     res.status(400);
     throw new Error("Sorry, you have already made a request");
   }
 
-  const request = await Request.create(req.body);
+  const item = await Item.findById(req.body.itemId);
+  const swapItem = await Item.findById(req.body.swapItemId);
+
+  const request = await Request.create({
+    item: { ..._.pick(item, ["_id", "name", "image", "quantity", "store"]) },
+    itemQuantity: req.body.itemQuantity,
+    swapItem: {
+      ..._.pick(swapItem, ["_id", "name", "image", "quantity", "store"]),
+    },
+    comment: req.body.comment,
+  });
 
   if (request) {
     const requestSender = await User.findByIdAndUpdate(
-      request.swapItemStore.owner._id,
+      request.swapItem.store.owner._id,
       { $push: { outgoingRequests: request } },
       { new: true }
     );
 
     const requestReceiver = await User.findByIdAndUpdate(
-      request.itemStore.owner._id,
+      request.item.store.owner._id,
       { $push: { incomingRequests: request } },
       { new: true }
     );
 
     if (requestSender && requestReceiver) {
-      const { password, ...otherKeys } = requestSender._doc;
-      res
-        .status(200)
-        .json({ ...otherKeys, token: generateToken(requestSender._id) });
+      res.status(200).json(request);
     }
   } else {
     res.status(400);
@@ -48,9 +56,19 @@ const createRequest = asyncHandler(async (req, res) => {
 // @route PATCH /api/requests/:id
 // @access Private
 const updateRequest = asyncHandler(async (req, res) => {
-  const { _id, ...update } = req.body;
+  const item = await Item.findById(req.body.itemId);
+  const swapItem = await Item.findById(req.body.swapItemId);
 
-  const request = Request.findByIdAndUpdate(
+  const update = {
+    item: { ..._.pick(item, ["_id", "name", "image", "quantity", "store"]) },
+    itemQuantity: req.body.itemQuantity,
+    swapItem: {
+      ..._.pick(swapItem, ["_id", "name", "image", "quantity", "store"]),
+    },
+    comment: req.body.comment,
+  };
+
+  const request = await Request.findByIdAndUpdate(
     req.params.id,
     { $set: update },
     { new: true }
@@ -59,12 +77,12 @@ const updateRequest = asyncHandler(async (req, res) => {
   if (request) {
     let senderSet = {};
     Object.keys(update).map((field) => {
-      senderSet[`outgoingRequests.$.${field}`] = req.body[field];
+      senderSet[`outgoingRequests.$.${field}`] = update[field];
     });
 
     const updateSender = await User.updateOne(
       {
-        _id: request.swapItemStore.owner._id,
+        _id: request.swapItem.store.owner._id,
         outgoingRequests: { $elemMatch: { _id: request._id } },
       },
       { $set: senderSet },
@@ -73,12 +91,12 @@ const updateRequest = asyncHandler(async (req, res) => {
 
     let receiverSet = {};
     Object.keys(update).map((field) => {
-      receiverSet[`incomingRequests.$.${field}`] = req.body[field];
+      receiverSet[`incomingRequests.$.${field}`] = update[field];
     });
 
     const updateReceiver = await User.updateOne(
       {
-        _id: request.itemStore.owner._id,
+        _id: request.item.store.owner._id,
         incomingRequests: { $elemMatch: { _id: request._id } },
       },
       { $set: receiverSet },
@@ -86,10 +104,7 @@ const updateRequest = asyncHandler(async (req, res) => {
     );
 
     if (updateSender && updateReceiver) {
-      const { password, ...otherKeys } = updateSender._doc;
-      res
-        .status(200)
-        .json({ ...otherKeys, token: generateToken(updateSender._id) });
+      res.status(200).json(request);
     }
   } else {
     res.status(404);
@@ -151,7 +166,7 @@ const deleteRequest = asyncHandler(async (req, res) => {
 
   if (request) {
     await User.updateOne(
-      { _id: request.swapItemStore.owner._id },
+      { _id: request.swapItem.store.owner._id },
       {
         $pull: {
           outgoingRequests: { _id: request._id },
@@ -161,7 +176,7 @@ const deleteRequest = asyncHandler(async (req, res) => {
     );
 
     await User.updateOne(
-      { _id: request.itemStore.owner._id },
+      { _id: request.item.store.owner._id },
       {
         $pull: {
           incomingRequests: { _id: request._id },
@@ -191,7 +206,7 @@ const acceptRequest = asyncHandler(async (req, res) => {
   if (request) {
     const updateSender = await User.updateOne(
       {
-        _id: request.swapItemStore.owner._id,
+        _id: request.swapItem.store.owner._id,
         outgoingRequests: { $elemMatch: { _id: request._id } },
       },
       { $set: { status: "accepted" } },
@@ -200,7 +215,7 @@ const acceptRequest = asyncHandler(async (req, res) => {
 
     const updateReceiver = await User.updateOne(
       {
-        _id: request.itemStore.owner._id,
+        _id: request.item.store.owner._id,
         incomingRequests: { $elemMatch: { _id: request._id } },
       },
       { $set: { status: "accepted" } },
@@ -235,7 +250,7 @@ const rejectRequest = asyncHandler(async (req, res) => {
   if (request) {
     const updateSender = await User.updateOne(
       {
-        _id: request.swapItemStore.owner._id,
+        _id: request.swapItem.store.owner._id,
         outgoingRequests: { $elemMatch: { _id: request._id } },
       },
       { $set: { status: "rejected" } },
@@ -244,7 +259,7 @@ const rejectRequest = asyncHandler(async (req, res) => {
 
     const updateReceiver = await User.updateOne(
       {
-        _id: request.itemStore.owner._id,
+        _id: request.item.store.owner._id,
         incomingRequests: { $elemMatch: { _id: request._id } },
       },
       { $set: { status: "rejected" } },

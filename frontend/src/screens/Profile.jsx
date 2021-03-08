@@ -52,9 +52,9 @@ const Profile = ({ history }) => {
           {deleteStoreMessage && (
             <Message variant="success">{deleteStoreMessage}</Message>
           )}
-          <h1 className="sub-heading"> Welcome {user.name} </h1>
-          <p>{user.username}</p>
-          <p>{user.phoneNumber}</p>
+          <h1 className="sub-heading"> Welcome {user && user.name} </h1>
+          <p>{user && user.username}</p>
+          <p>{user && user.phoneNumber}</p>
         </>
       )}
       <hr />
