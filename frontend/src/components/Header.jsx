@@ -45,10 +45,10 @@ function Header({ mode }) {
                   <NavDropdown.Item href="/favorites">
                     Favorites
                   </NavDropdown.Item>
-                  <NavDropdown.Item href="/requestsmade">
-                    Requests Made
+                  <NavDropdown.Item href="/requests-sent">
+                    Requests Sent
                   </NavDropdown.Item>
-                  <NavDropdown.Item href="/requestreceived">
+                  <NavDropdown.Item href="/requests-received">
                     Request Received
                   </NavDropdown.Item>
                   <NavDropdown.Divider />

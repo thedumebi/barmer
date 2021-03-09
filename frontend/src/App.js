@@ -17,6 +17,8 @@ import NewItem from "./screens/NewItem";
 import ItemEdit from "./screens/ItemEditScreen";
 import Favorites from "./screens/Favorites";
 import NotFound from "./screens/NotFound";
+import RequestsMade from "./screens/RequestsMade";
+import RequestsReceived from "./screens/RequestsReceived";
 
 const App = () => {
   const getCookie = (name) => {
@@ -72,9 +74,15 @@ const App = () => {
             <Route exact path="/items" component={ItemsList} />
             <Route exact path="/items/newitem?store=:id" component={NewItem} />
             <Route exact path="/items/newitem" component={NewItem} />
-            <Route path="/item/:id" component={Item} />
             <Route exact path="/item/:id/edit" component={ItemEdit} />
+            <Route path="/item/:id" component={Item} />
             <Route exact path="/favorites" component={Favorites} />
+            <Route exact path="/requests-sent" component={RequestsMade} />
+            <Route
+              exact
+              path="/requests-received"
+              component={RequestsReceived}
+            />
             <Route exact path="/settings" component={Settings} />
             <Route component={NotFound} />
           </Switch>

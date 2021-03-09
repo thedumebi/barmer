@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, ListGroup } from "react-bootstrap";
 import FormContainer from "./FormContainer";
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getItems } from "../actions/item.actions";
 import Message from "./Message";
+import Loader from "./Loader";
 import {
   createRequest,
   getRequestDetails,
@@ -21,6 +22,7 @@ const Request = ({ item, user }) => {
     itemId: item._id,
     itemQuantity: "",
     swapItemId: "",
+    swapItemQuantity: "",
     comment: "",
   });
 
@@ -28,9 +30,16 @@ const Request = ({ item, user }) => {
   const requestDetails = useSelector((state) => state.requestDetails);
   const { request: requestDetail } = requestDetails;
 
+  const createRequestStatus = useSelector((state) => state.createRequest);
+  const { loading, error: requestError, status } = createRequestStatus;
+
+  const updateRequestStatus = useSelector((state) => state.requestUpdate);
+  const { error: updateError, success } = updateRequestStatus;
+
   const itemList = useSelector((state) => state.itemList);
   const { error, items } = itemList;
   const [quantityError, setQuantityError] = useState(null);
+  const [swapQuantityError, setSwapQuantityError] = useState(null);
 
   useEffect(() => {
     if (!items) {
@@ -78,6 +87,23 @@ const Request = ({ item, user }) => {
       } else {
         setQuantityError(null);
       }
+    } else if (name === "swapItemQuantity") {
+      setRequest((prevValues) => {
+        return { ...prevValues, [name]: value };
+      });
+      const itemQuantity = items.find((item) => item._id === request.swapItemId)
+        .quantity;
+      const itemName = items.find((item) => item._id === request.swapItemId)
+        .name;
+      if (value > itemQuantity) {
+        setSwapQuantityError(
+          `The maximum number available for ${itemName} is ${itemQuantity}`
+        );
+      } else if (value < 1) {
+        setSwapQuantityError("The minimum number for a swpa is one(1)");
+      } else {
+        setSwapQuantityError(null);
+      }
     } else {
       setRequest((prevValues) => {
         return {
@@ -93,8 +119,10 @@ const Request = ({ item, user }) => {
       dispatch(createRequest(request));
       dispatch({ type: REQUEST_DETAILS_RESET });
     }
+    if (status) {
+      history.push("/requestsmade");
+    }
     event.preventDefault();
-    history.push("/requestsmade");
   };
 
   const submitUdateRequest = (event) => {
@@ -102,77 +130,114 @@ const Request = ({ item, user }) => {
       dispatch(updateRequest(request));
       dispatch({ type: REQUEST_DETAILS_RESET });
     }
+
+    if (success) {
+      history.push("/requestsmade");
+    }
     event.preventDefault();
-    history.push("/requestsmade");
   };
 
   return (
     <FormContainer>
-      <Form>
-        <Form.Group>
-          <Form.Label>Quantity</Form.Label>
-          {quantityError && <Message variant="danger">{quantityError}</Message>}
-          <Form.Control
-            type="number"
-            onChange={handleChange}
-            name="itemQuantity"
-            value={request.itemQuantity}
-            max={item.quantity}
-            min={1}
-            placeholder="How many do you want?"
-            style={{ background: "#121212" }}
-          />
-        </Form.Group>
+      {requestError && <Message variant="danger">{requestError}</Message>}
+      {updateError && <Message variant="danger">{updateError}</Message>}
+      {loading && <Loader />}
+      <ListGroup variant="flush">
+        <ListGroup.Item>
+          <Form>
+            <Form.Group>
+              <Form.Label>Quantity</Form.Label>
+              <Form.Control
+                type="number"
+                onChange={handleChange}
+                name="itemQuantity"
+                value={request.itemQuantity}
+                max={item.quantity}
+                min={1}
+                placeholder="How many do you want?"
+              />
+              {quantityError && (
+                <Message variant="danger">{quantityError}</Message>
+              )}
+            </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Swap Item</Form.Label>
-          {error && <Message variant="danger">{error}</Message>}
-          <Form.Control
-            as="select"
-            onChange={handleChange}
-            name="swapItemId"
-            style={{ background: "#121212" }}
-            value={request.swapItemId}
-          >
-            <option value="">Select your item to swap with</option>
-            {items &&
-              user &&
-              items
-                .filter((item) => item.store.owner._id === user._id)
-                .map((swapItem) => {
-                  return (
-                    <option key={swapItem._id} value={swapItem._id}>
-                      {swapItem.name}
-                    </option>
-                  );
-                })}
-          </Form.Control>
-        </Form.Group>
+            <Form.Group>
+              <Form.Label>Swap Item</Form.Label>
+              {error && <Message variant="danger">{error}</Message>}
+              <Form.Control
+                as="select"
+                onChange={handleChange}
+                name="swapItemId"
+                value={request.swapItemId}
+              >
+                <option value="">Select your item to swap with</option>
+                {items &&
+                  user &&
+                  items
+                    .filter((item) => item.store.owner._id === user._id)
+                    .map((swapItem) => {
+                      return (
+                        <option key={swapItem._id} value={swapItem._id}>
+                          {swapItem.name}
+                        </option>
+                      );
+                    })}
+              </Form.Control>
+            </Form.Group>
 
-        <Form.Group>
-          <Form.Label>Comment</Form.Label>
-          <Form.Control
-            as="textarea"
-            onChange={handleChange}
-            name="comment"
-            value={request.comment}
-            rows={3}
-            style={{ background: "#121212" }}
-          />
-        </Form.Group>
+            <Form.Group>
+              <Form.Label>Swap Item Quantity</Form.Label>
+              <Form.Control
+                type="number"
+                onChange={handleChange}
+                name="swapItemQuantity"
+                value={request.swapItemQuantity}
+                max={
+                  items &&
+                  items.find((item) => item._id === request.swapItemId) &&
+                  items.find((item) => item._id === request.swapItemId).quantity
+                }
+                min={1}
+                placeholder="Quantity you are offering?"
+              />
+              {swapQuantityError && (
+                <Message variant="danger">{swapQuantityError}</Message>
+              )}
+            </Form.Group>
 
-        {url.path === "/item/:id/request" && (
-          <Button type="submit" variant="primary" onClick={submitNewRequest}>
-            Submit Request
-          </Button>
-        )}
+            <Form.Group>
+              <Form.Label>Comment</Form.Label>
+              <Form.Control
+                as="textarea"
+                onChange={handleChange}
+                name="comment"
+                value={request.comment}
+                rows={3}
+              />
+            </Form.Group>
 
-        {url.path === "/item/:id/edit-request" && (
-          <Button type="submit" variant="primary" onClick={submitUdateRequest}>
-            Update Request
-          </Button>
-        )}
-      </Form>
+            {url.path === "/item/:id/request" && (
+              <Button
+                type="submit"
+                variant="primary"
+                onClick={submitNewRequest}
+              >
+                Submit Request
+              </Button>
+            )}
+
+            {url.path === "/item/:id/edit-request" && (
+              <Button
+                type="submit"
+                variant="primary"
+                onClick={submitUdateRequest}
+              >
+                Update Request
+              </Button>
+            )}
+          </Form>
+        </ListGroup.Item>
+      </ListGroup>
     </FormContainer>
   );
 };

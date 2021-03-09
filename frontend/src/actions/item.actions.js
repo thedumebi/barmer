@@ -33,6 +33,7 @@ import {
 } from "../constants/item.constants";
 import { USER_LOGIN_SUCCESS } from "../constants/user.constants";
 import { getStoreDetails } from "./store.actions";
+import { getUserDetails } from "./user.actions";
 
 export const createItem = (item) => async (dispatch, getState) => {
   try {
@@ -292,6 +293,8 @@ export const favoriteItem = (id, userId) => async (dispatch, getState) => {
       payload: data,
     });
 
+    dispatch(getUserDetails(data._id));
+
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 
     localStorage.setItem("userInfo", JSON.stringify(data));
@@ -331,6 +334,8 @@ export const unFavoriteItem = (id, userId) => async (dispatch, getState) => {
       type: ITEM_UNFAVORITE_SUCCESS,
       payload: data,
     });
+
+    dispatch(getUserDetails(data._id));
 
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
 

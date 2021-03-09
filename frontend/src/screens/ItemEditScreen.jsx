@@ -110,7 +110,7 @@ const ItemEdit = ({ history, match }) => {
       </Button>
 
       <FormContainer>
-        <h2>Edit Store</h2>
+        <h2>Edit Item</h2>
         {loading && <Loader />}
         {error && <Message variant="danger">{error}</Message>}
         {updateError && <Message variant="danger">{updateError}</Message>}

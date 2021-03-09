@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Link, Route, useHistory, useRouteMatch } from "react-router-dom";
+import {
+  Link,
+  Route,
+  useHistory,
+  useRouteMatch,
+  useLocation,
+} from "react-router-dom";
 import { Button, Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -14,6 +20,7 @@ import { getUserDetails } from "../actions/user.actions";
 const Items = ({ item }) => {
   const url = useRouteMatch();
   const history = useHistory();
+  const location = useLocation();
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -169,6 +176,7 @@ const Items = ({ item }) => {
             )}
 
           {item._id &&
+            location.pathname === url.url &&
             url.path === "/item/:id" &&
             user &&
             user._id !== item.store.owner._id &&
@@ -181,6 +189,7 @@ const Items = ({ item }) => {
             )}
 
           {item._id &&
+            location.pathname === url.url &&
             url.path === "/item/:id" &&
             user &&
             user._id !== item.store.owner._id &&

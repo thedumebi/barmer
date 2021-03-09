@@ -4,22 +4,23 @@ const User = require("../models/users.model");
 const asyncHandler = require("express-async-handler");
 const generateToken = require("../utils/generateToken.utils");
 const Item = require("../models/items.model");
+const mongoose = require("mongoose");
 
 // @desc Create a new request
 // @route POST /api/requests/
 // @access Private
 const createRequest = asyncHandler(async (req, res) => {
+  const item = await Item.findById(req.body.itemId);
+  const swapItem = await Item.findById(req.body.swapItemId);
   const requestExists = await Request.findOne({
-    "item._id": req.body.itemId,
-    "swapItem._id": req.body.swapItemId,
+    "item.name": item.name,
+    "swapItem.name": swapItem.name,
   });
   if (requestExists) {
+    console.log(requestExists);
     res.status(400);
     throw new Error("Sorry, you have already made a request");
   }
-
-  const item = await Item.findById(req.body.itemId);
-  const swapItem = await Item.findById(req.body.swapItemId);
 
   const request = await Request.create({
     item: { ..._.pick(item, ["_id", "name", "image", "quantity", "store"]) },
