@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 require("colors");
+const path = require("path");
 const connectDB = require("./config/database.utils");
 const { notFound, errorHandler } = require("./middleware/error.middleware");
 const userRoutes = require("./routes/user.routes");
@@ -29,9 +30,12 @@ app.use("/api/carousel", carouselRoutes);
 app.use("/backend/uploads", express.static(__dirname + "/uploads"));
 
 if (process.env.NODE_ENV !== "development") {
-  app.use(express.static(__dirname + "/build"));
+  // app.use(express.static(__dirname + "/build"));
+  app.use(express.static(path.join(__dirname, "..", "/frontend/build")));
 
-  app.get("*", (req, res) => res.sendFile(__dirname + "/build/index.html"));
+  app.get("*", (req, res) =>
+    res.sendFile(path.join(__dirname, "..", "/frontend/build/index.html"))
+  );
 } else {
   app.get("/", (req, res) => {
     res.send("API is running ....".cyan.bold);
