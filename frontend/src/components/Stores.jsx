@@ -47,7 +47,7 @@ const Stores = ({ store }) => {
         style={{ height: url.path === "/store/:id" && "auto" }}
       >
         <h1 className="sub-heading">{store.name}</h1>
-        <small>{store.category}</small>
+        <small>Category: {store.category}</small>
         <p>Description: {store.description}</p>
         {store.items &&
           store.items.map((item) => <Items key={item.id} item={item} />)}

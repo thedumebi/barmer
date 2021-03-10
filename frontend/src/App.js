@@ -19,6 +19,7 @@ import Favorites from "./screens/Favorites";
 import NotFound from "./screens/NotFound";
 import RequestsMade from "./screens/RequestsMade";
 import RequestsReceived from "./screens/RequestsReceived";
+import RequestDetailScreen from "./screens/RequestDetailsScreen";
 
 const App = () => {
   const getCookie = (name) => {
@@ -83,6 +84,7 @@ const App = () => {
               path="/requests-received"
               component={RequestsReceived}
             />
+            <Route exact path="/requests/:id" component={RequestDetailScreen} />
             <Route exact path="/settings" component={Settings} />
             <Route component={NotFound} />
           </Switch>

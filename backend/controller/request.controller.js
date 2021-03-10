@@ -4,7 +4,6 @@ const User = require("../models/users.model");
 const asyncHandler = require("express-async-handler");
 const generateToken = require("../utils/generateToken.utils");
 const Item = require("../models/items.model");
-const mongoose = require("mongoose");
 
 // @desc Create a new request
 // @route POST /api/requests/
@@ -212,7 +211,7 @@ const acceptRequest = asyncHandler(async (req, res) => {
         _id: request.swapItem.store.owner._id,
         outgoingRequests: { $elemMatch: { _id: request._id } },
       },
-      { $set: { status: "accepted" } },
+      { $set: { "outgoingRequests.$.status": "accepted" } },
       { new: true }
     );
 
@@ -221,15 +220,12 @@ const acceptRequest = asyncHandler(async (req, res) => {
         _id: request.item.store.owner._id,
         incomingRequests: { $elemMatch: { _id: request._id } },
       },
-      { $set: { status: "accepted" } },
+      { $set: { "incomingRequests.$.status": "accepted" } },
       { new: true }
     );
 
     if (updateSender && updateReceiver) {
-      const { password, ...otherKeys } = updateReceiver._doc;
-      res
-        .status(200)
-        .json({ ...otherKeys, token: generateToken(updateReceiver._id) });
+      res.status(200).json(request);
     } else {
       res.status(404);
       throw new Error("User request could not be accepted");
@@ -256,7 +252,7 @@ const rejectRequest = asyncHandler(async (req, res) => {
         _id: request.swapItem.store.owner._id,
         outgoingRequests: { $elemMatch: { _id: request._id } },
       },
-      { $set: { status: "rejected" } },
+      { $set: { "outgoingRequests.$.status": "rejected" } },
       { new: true }
     );
 
@@ -265,18 +261,15 @@ const rejectRequest = asyncHandler(async (req, res) => {
         _id: request.item.store.owner._id,
         incomingRequests: { $elemMatch: { _id: request._id } },
       },
-      { $set: { status: "rejected" } },
+      { $set: { "incomingRequests.$.status": "rejected" } },
       { new: true }
     );
 
     if (updateSender && updateReceiver) {
-      const { password, ...otherKeys } = updateReceiver._doc;
-      res
-        .status(200)
-        .json({ ...otherKeys, token: generateToken(updateReceiver._id) });
+      res.status(200).json(request);
     } else {
       res.status(404);
-      throw new Error("User request could not be accepted");
+      throw new Error("User request could not be rejected");
     }
   } else {
     res.status(404);

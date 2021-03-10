@@ -34,7 +34,7 @@ const Items = ({ item }) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!user) {
+    if (!user && userInfo) {
       dispatch(getUserDetails(userInfo._id));
     }
     if (success) {
@@ -228,6 +228,18 @@ const Items = ({ item }) => {
                 </Button>
               </Link>
             )}
+
+          {!user && url.path === "/item/:id" && (
+            <Link to={`/login?redirect=/item/${item._id}`}>
+              <Button className="btn-dark">Make Request</Button>
+            </Link>
+          )}
+
+          {!user && url.path === "/item/:id" && (
+            <Link to={`/login?redirect=/item/${item._id}`}>
+              <Button className="btn-dark">Favorite</Button>
+            </Link>
+          )}
         </>
       )}
     </div>

@@ -65,14 +65,19 @@ const RequestCard = ({
         <div className="content">
           <h1 className="sub-heading">{item.name}</h1>
           <small>{item.store.category}</small>
-          <p>Number requested: {itemQuantity}</p>
+          <p>
+            {url.path === "/requests-sent"
+              ? "Number Requested:"
+              : "Number Offered:"}{" "}
+            {itemQuantity}
+          </p>
         </div>
       </div>
 
       <div className="section">
         {swapItem && swapItem.image && (
           <div className="heading">
-            <Link to={`/item/${item._id}`}>
+            <Link to={`/item/${swapItem._id}`}>
               <Image src={`/${swapItem.image}`} alt={swapItem.name} />
             </Link>
           </div>
@@ -80,7 +85,12 @@ const RequestCard = ({
         <div className="content">
           <h1 className="sub-heading">{swapItem.name}</h1>
           <small>{swapItem.store.category}</small>
-          <p>Number Offered: {swapItemQuantity}</p>
+          <p>
+            {url.path === "/requests-sent"
+              ? "Number Offered:"
+              : "Number Requested:"}{" "}
+            {swapItemQuantity}
+          </p>
         </div>
       </div>
 
@@ -88,19 +98,20 @@ const RequestCard = ({
 
       {status && <p style={{ fontWeight: 700 }}>Status: {status}</p>}
 
-      {(url.path === "/requests-sent" || url.path === "/requests-received") &&
-        user && (
-          <Link to={`/requests/${requestId}`}>
-            <Button className="btn-dark" type="button">
-              View Request
-            </Button>
-          </Link>
-        )}
+      {url.path === "/requests-received" && user && (
+        <Link to={`/requests/${requestId}`}>
+          <Button className="btn-dark" type="button">
+            View Request
+          </Button>
+        </Link>
+      )}
 
-      {(url.path === "/requests-sent" || url.path === "/requests-received") &&
+      {url.path === "/requests-sent" &&
+        status &&
+        status !== "accepted" &&
         user &&
         user.outgoingRequests.find((request) => request._id === requestId) && (
-          <Link to={`/item/${item._id}/edit-request}`}>
+          <Link to={`/item/${item._id}/edit-request`}>
             <Button className="btn-dark" type="button">
               Edit Request
             </Button>
@@ -108,6 +119,8 @@ const RequestCard = ({
         )}
 
       {url.path === "/requests/:id" &&
+        status &&
+        status !== "accepted" &&
         user &&
         user.incomingRequests.find((request) => request._id === requestId) && (
           <Button className="btn-dark" type="button" onClick={acceptHandler}>
@@ -116,6 +129,8 @@ const RequestCard = ({
         )}
 
       {url.path === "/requests/:id" &&
+        status &&
+        status !== "rejected" &&
         user &&
         user.incomingRequests.find((request) => request._id === requestId) && (
           <Button className="btn-dark" type="button" onClick={rejectHandler}>

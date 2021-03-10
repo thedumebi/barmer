@@ -209,7 +209,7 @@ export const deleteRequest = (id) => async (dispatch, getState) => {
   }
 };
 
-export const acceptRequest = (request) => async (dispatch, getState) => {
+export const acceptRequest = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: REQUEST_ACCEPT_REQUEST });
 
@@ -225,18 +225,12 @@ export const acceptRequest = (request) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.patch(
-      `/api/requests/${request._id}/accept`,
-      request,
+      `/api/requests/${id}/accept`,
+      { id },
       config
     );
 
-    dispatch({ type: REQUEST_ACCEPT_SUCCESS });
-
-    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
-
-    localStorage.setItem("userInfo", JSON.stringify(data));
-
-    dispatch(getUserDetails(userInfo._id));
+    dispatch({ type: REQUEST_ACCEPT_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: REQUEST_ACCEPT_FAIL,
@@ -248,7 +242,7 @@ export const acceptRequest = (request) => async (dispatch, getState) => {
   }
 };
 
-export const rejectRequest = (request) => async (dispatch, getState) => {
+export const rejectRequest = (id) => async (dispatch, getState) => {
   try {
     dispatch({ type: REQUEST_REJECT_REQUEST });
 
@@ -264,20 +258,12 @@ export const rejectRequest = (request) => async (dispatch, getState) => {
     };
 
     const { data } = await axios.patch(
-      `/api/requests/${request._id}/reject`,
-      request,
+      `/api/requests/${id}/reject`,
+      { id },
       config
     );
 
-    dispatch({
-      type: REQUEST_REJECT_SUCCESS,
-    });
-
-    dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
-
-    localStorage.setItem("userInfo", JSON.stringify(data));
-
-    dispatch(getUserDetails(userInfo._id));
+    dispatch({ type: REQUEST_REJECT_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: REQUEST_REJECT_FAIL,
