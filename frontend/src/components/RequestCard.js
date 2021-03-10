@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useHistory, useRouteMatch, Link } from "react-router-dom";
-import { Image } from "react-bootstrap";
+import { Button, Image } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteRequest } from "../actions/request.actions";
+import { acceptRequest, rejectRequest } from "../actions/request.actions";
 import Loader from "./Loader";
+import Message from "./Message";
 
 const RequestCard = ({
   requestId,
@@ -19,19 +20,34 @@ const RequestCard = ({
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, user } = userDetails;
 
+  const requestAcceptStatus = useSelector((state) => state.requestAccept);
+  const { error: acceptError, status: acceptStatus } = requestAcceptStatus;
+
+  const requestRejectStatus = useSelector((state) => state.requestReject);
+  const { error: rejectError, status: rejectStatus } = requestRejectStatus;
+
   const dispatch = useDispatch();
 
-  const deleteHandler = (event) => {
-    if (window.confirm("This is an irreversible act. Are you sure?")) {
-      if (window.confirm("LAST WARNING, DELETE REQUEST?")) {
-        dispatch(deleteRequest(requestId));
-        history.push("/profile");
-      }
+  useEffect(() => {
+    if (acceptStatus || rejectStatus) {
+      history.push("/requests-received");
     }
+  }, [history, acceptStatus, rejectStatus]);
+
+  const acceptHandler = (event) => {
+    dispatch(acceptRequest(requestId));
+    event.preventDefault();
+  };
+
+  const rejectHandler = (event) => {
+    dispatch(rejectRequest(requestId));
+    event.preventDefault();
   };
 
   return (
     <div className="request">
+      {acceptError && <Message variant="danger">{acceptError}</Message>}
+      {rejectError && <Message variant="danger">{rejectError}</Message>}
       {loading && <Loader />}
       <i
         className="fas fa-arrows-alt-h fa-2x"
@@ -71,6 +87,41 @@ const RequestCard = ({
       <br />
 
       {status && <p style={{ fontWeight: 700 }}>Status: {status}</p>}
+
+      {(url.path === "/requests-sent" || url.path === "/requests-received") &&
+        user && (
+          <Link to={`/requests/${requestId}`}>
+            <Button className="btn-dark" type="button">
+              View Request
+            </Button>
+          </Link>
+        )}
+
+      {(url.path === "/requests-sent" || url.path === "/requests-received") &&
+        user &&
+        user.outgoingRequests.find((request) => request._id === requestId) && (
+          <Link to={`/item/${item._id}/edit-request}`}>
+            <Button className="btn-dark" type="button">
+              Edit Request
+            </Button>
+          </Link>
+        )}
+
+      {url.path === "/requests/:id" &&
+        user &&
+        user.incomingRequests.find((request) => request._id === requestId) && (
+          <Button className="btn-dark" type="button" onClick={acceptHandler}>
+            Accept
+          </Button>
+        )}
+
+      {url.path === "/requests/:id" &&
+        user &&
+        user.incomingRequests.find((request) => request._id === requestId) && (
+          <Button className="btn-dark" type="button" onClick={rejectHandler}>
+            Reject
+          </Button>
+        )}
     </div>
   );
 };

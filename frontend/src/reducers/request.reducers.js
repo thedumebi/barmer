@@ -37,7 +37,7 @@ export const createRequestReducer = (state = {}, action) => {
     case REQUEST_CREATE_REQUEST:
       return { loading: true };
     case REQUEST_CREATE_SUCCESS:
-      return { loading: false, status: true };
+      return { loading: false, status: true, request: action.payload };
     case REQUEST_CREATE_FAIL:
       return { loading: false, error: action.payload };
     case REQUEST_CREATE_RESET:
@@ -97,7 +97,7 @@ export const requestUpdateReducer = (state = {}, action) => {
     case REQUEST_UPDATE_REQUEST:
       return { loading: true };
     case REQUEST_UPDATE_SUCCESS:
-      return { loading: false, success: true };
+      return { loading: false, success: true, request: action.payload };
     case REQUEST_UPDATE_FAIL:
       return { loading: false, error: action.payload };
     case REQUEST_UPDATE_RESET:

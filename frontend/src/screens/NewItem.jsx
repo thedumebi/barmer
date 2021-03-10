@@ -32,7 +32,7 @@ const NewItem = ({ history, location }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push("/login?redirect=/newitem");
+      history.push("/login?redirect=/items/newitem");
     } else {
       if (!store) {
         dispatch(getStoreDetails(location.search.split("=")[1]));
@@ -44,7 +44,7 @@ const NewItem = ({ history, location }) => {
       if (status) {
         history.push(`/store/${store._id}`);
       }
-      if (userInfo._id !== store.owner._id) {
+      if (!store || userInfo._id !== store.owner._id) {
         history.push("/profile");
       }
     }

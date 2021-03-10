@@ -10,8 +10,13 @@ import {
   createRequest,
   getRequestDetails,
   updateRequest,
+  deleteRequest,
 } from "../actions/request.actions";
-import { REQUEST_DETAILS_RESET } from "../constants/request.constants";
+import {
+  REQUEST_DETAILS_RESET,
+  REQUEST_UPDATE_RESET,
+  REQUEST_CREATE_RESET,
+} from "../constants/request.constants";
 
 const Request = ({ item, user }) => {
   const url = useRouteMatch();
@@ -36,8 +41,12 @@ const Request = ({ item, user }) => {
   const updateRequestStatus = useSelector((state) => state.requestUpdate);
   const { error: updateError, success } = updateRequestStatus;
 
+  const requestDelete = useSelector((state) => state.requestDelete);
+  const { error: deleteError, success: deleteSuccess } = requestDelete;
+
   const itemList = useSelector((state) => state.itemList);
   const { error, items } = itemList;
+
   const [quantityError, setQuantityError] = useState(null);
   const [swapQuantityError, setSwapQuantityError] = useState(null);
 
@@ -68,11 +77,39 @@ const Request = ({ item, user }) => {
           itemId: requestDetail.item._id,
           itemQuantity: requestDetail.itemQuantity,
           swapItemId: requestDetail.swapItem._id,
+          swapItemQuantity: requestDetail.swapItemQuantity,
           comment: requestDetail.comment,
         };
       });
     }
-  }, [dispatch, items, user, item, requestDetail]);
+    if (status) {
+      history.push("/requests-sent");
+
+      dispatch({ type: REQUEST_DETAILS_RESET });
+      dispatch({ type: REQUEST_CREATE_RESET });
+    }
+    if (success) {
+      history.push("/requests-sent");
+
+      dispatch({ type: REQUEST_DETAILS_RESET });
+      dispatch({ type: REQUEST_UPDATE_RESET });
+    }
+    if (deleteSuccess) {
+      history.push("/requests-sent");
+
+      dispatch({ type: REQUEST_DETAILS_RESET });
+    }
+  }, [
+    dispatch,
+    items,
+    user,
+    item,
+    requestDetail,
+    status,
+    success,
+    deleteSuccess,
+    history,
+  ]);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
@@ -91,18 +128,25 @@ const Request = ({ item, user }) => {
       setRequest((prevValues) => {
         return { ...prevValues, [name]: value };
       });
-      const itemQuantity = items.find((item) => item._id === request.swapItemId)
-        .quantity;
-      const itemName = items.find((item) => item._id === request.swapItemId)
-        .name;
-      if (value > itemQuantity) {
+      if (request.swapItemId === "") {
         setSwapQuantityError(
-          `The maximum number available for ${itemName} is ${itemQuantity}`
+          `You do not have any item available for an exchange`
         );
-      } else if (value < 1) {
-        setSwapQuantityError("The minimum number for a swpa is one(1)");
       } else {
-        setSwapQuantityError(null);
+        const itemQuantity = items.find(
+          (item) => item._id === request.swapItemId
+        ).quantity;
+        const itemName = items.find((item) => item._id === request.swapItemId)
+          .name;
+        if (value > itemQuantity) {
+          setSwapQuantityError(
+            `The maximum number available for ${itemName} is ${itemQuantity}`
+          );
+        } else if (value < 1) {
+          setSwapQuantityError("The minimum number for a swap is one(1)");
+        } else {
+          setSwapQuantityError(null);
+        }
       }
     } else {
       setRequest((prevValues) => {
@@ -115,30 +159,33 @@ const Request = ({ item, user }) => {
   };
 
   const submitNewRequest = (event) => {
-    if (quantityError === null) {
+    if (quantityError === null && swapQuantityError === null) {
       dispatch(createRequest(request));
-      dispatch({ type: REQUEST_DETAILS_RESET });
     }
-    if (status) {
-      history.push("/requestsmade");
-    }
+
     event.preventDefault();
   };
 
-  const submitUdateRequest = (event) => {
-    if (quantityError === null) {
+  const submitUpdateRequest = (event) => {
+    if (quantityError === null && swapQuantityError === null) {
       dispatch(updateRequest(request));
-      dispatch({ type: REQUEST_DETAILS_RESET });
     }
 
-    if (success) {
-      history.push("/requestsmade");
+    event.preventDefault();
+  };
+
+  const deleteHandler = (event) => {
+    if (window.confirm("This is an irreversible act. Are you sure?")) {
+      if (window.confirm("LAST WARNING, DELETE REQUEST?")) {
+        dispatch(deleteRequest(request._id));
+      }
     }
     event.preventDefault();
   };
 
   return (
     <FormContainer>
+      {deleteError && <Message variant="danger">{deleteError}</Message>}
       {requestError && <Message variant="danger">{requestError}</Message>}
       {updateError && <Message variant="danger">{updateError}</Message>}
       {loading && <Loader />}
@@ -195,6 +242,7 @@ const Request = ({ item, user }) => {
                 max={
                   items &&
                   items.find((item) => item._id === request.swapItemId) &&
+                  request.swapItemId !== "" &&
                   items.find((item) => item._id === request.swapItemId).quantity
                 }
                 min={1}
@@ -230,9 +278,15 @@ const Request = ({ item, user }) => {
               <Button
                 type="submit"
                 variant="primary"
-                onClick={submitUdateRequest}
+                onClick={submitUpdateRequest}
               >
                 Update Request
+              </Button>
+            )}
+
+            {url.path === "/item/:id/edit-request" && (
+              <Button type="submit" variant="primary" onClick={deleteHandler}>
+                Delete Request
               </Button>
             )}
           </Form>

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import Items from "./Items";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteStore } from "../actions/store.actions";
+import Message from "./Message";
 
 const Stores = ({ store }) => {
   const url = useRouteMatch();
@@ -12,19 +13,28 @@ const Stores = ({ store }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const storeDelete = useSelector((state) => state.storeDelete);
+  const { success, error } = storeDelete;
+
   const dispatch = useDispatch();
 
   const deleteHandler = (event) => {
     if (window.confirm("This is an irreversible act. Are you sure?")) {
       if (window.confirm("LAST WARNING, DELETE STORE?")) {
         dispatch(deleteStore(store._id));
-        history.push("/profile");
       }
     }
   };
 
+  useEffect(() => {
+    if (success) {
+      history.push("/profile");
+    }
+  }, [history, success]);
+
   return (
     <div className="case">
+      {error && <Message variant="danger">{error}</Message>}
       {store.image && (
         <div className="heading">
           <Link to={`/store/${store._id}`}>

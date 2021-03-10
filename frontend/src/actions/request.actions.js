@@ -47,9 +47,8 @@ export const createRequest = (request) => async (dispatch, getState) => {
 
     dispatch({
       type: REQUEST_CREATE_SUCCESS,
+      payload: data,
     });
-
-    dispatch(getUserDetails(data.swapItem.store.owner._id));
   } catch (error) {
     dispatch({
       type: REQUEST_CREATE_FAIL,
@@ -166,9 +165,7 @@ export const updateRequest = (request) => async (dispatch, getState) => {
       config
     );
 
-    dispatch({ type: REQUEST_UPDATE_SUCCESS });
-
-    dispatch(getUserDetails(data.swapItem.store.owner._id));
+    dispatch({ type: REQUEST_UPDATE_SUCCESS, payload: data });
   } catch (error) {
     dispatch({
       type: REQUEST_UPDATE_FAIL,
@@ -201,8 +198,6 @@ export const deleteRequest = (id) => async (dispatch, getState) => {
       type: REQUEST_DELETE_SUCCESS,
       payload: data,
     });
-
-    dispatch(getUserDetails(userInfo._id));
   } catch (error) {
     dispatch({
       type: REQUEST_DELETE_FAIL,

@@ -20,7 +20,10 @@ const Profile = ({ history }) => {
   const { status: shopCreated } = createStoreState;
 
   const storeDelete = useSelector((state) => state.storeDelete);
-  const { error: deleteStoreError, message: deleteStoreMessage } = storeDelete;
+  const { message: deleteStoreMessage } = storeDelete;
+
+  const itemDelete = useSelector((state) => state.itemDelete);
+  const { message: deleteItemMessage } = itemDelete;
 
   useEffect(() => {
     if (!userInfo) {
@@ -46,11 +49,11 @@ const Profile = ({ history }) => {
               Your shop was created successfully
             </Message>
           )}
-          {deleteStoreError && (
-            <Message variant="danger">{deleteStoreError}</Message>
-          )}
           {deleteStoreMessage && (
             <Message variant="success">{deleteStoreMessage}</Message>
+          )}
+          {deleteItemMessage && (
+            <Message variant="success">{deleteItemMessage}</Message>
           )}
           <h1 className="sub-heading"> Welcome {user && user.name} </h1>
           <p>{user && user.username}</p>

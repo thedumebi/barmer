@@ -28,6 +28,7 @@ const createRequest = asyncHandler(async (req, res) => {
     swapItem: {
       ..._.pick(swapItem, ["_id", "name", "image", "quantity", "store"]),
     },
+    swapItemQuantity: req.body.swapItemQuantity,
     comment: req.body.comment,
   });
 
@@ -66,6 +67,7 @@ const updateRequest = asyncHandler(async (req, res) => {
     swapItem: {
       ..._.pick(swapItem, ["_id", "name", "image", "quantity", "store"]),
     },
+    swapItemQuantity: req.body.swapItemQuantity,
     comment: req.body.comment,
   };
 

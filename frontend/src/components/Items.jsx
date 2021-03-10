@@ -28,19 +28,24 @@ const Items = ({ item }) => {
   const userDetails = useSelector((state) => state.userDetails);
   const { user } = userDetails;
 
+  const itemDelete = useSelector((state) => state.itemDelete);
+  const { success, error } = itemDelete;
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (!user) {
       dispatch(getUserDetails(userInfo._id));
     }
-  }, [user, dispatch, userInfo]);
+    if (success) {
+      history.push("/profile");
+    }
+  }, [user, dispatch, userInfo, history, success]);
 
   const deleteHandler = () => {
     if (window.confirm("This is an ireversible act. Are you sure?")) {
       if (window.confirm("LAST WARNING, DELETE ITEM?")) {
         dispatch(deleteItem(item._id, item.store._id));
-        history.push("/profile");
       }
     }
   };
@@ -95,6 +100,7 @@ const Items = ({ item }) => {
         </div>
       ) : (
         <>
+          {error && <Message variant="error">{error}</Message>}
           {url.path === "/item/:id" && (
             <Message variant="info">
               Tap the image tile to view the full item image

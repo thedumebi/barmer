@@ -17,7 +17,7 @@ const RequestsReceived = ({ history }) => {
 
   useEffect(() => {
     if (!userInfo) {
-      history.push("/login?redirect=/requestsmade");
+      history.push("/login?redirect=/requests-received");
     } else {
       dispatch(getUserDetails(userInfo._id));
     }

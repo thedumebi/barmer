@@ -15,9 +15,12 @@ const RequestsMade = ({ history }) => {
   const userDetails = useSelector((state) => state.userDetails);
   const { loading, error, user } = userDetails;
 
+  const requestDelete = useSelector((state) => state.requestDelete);
+  const { message: deleteMessage } = requestDelete;
+
   useEffect(() => {
     if (!userInfo) {
-      history.push("/login?redirect=/requestsmade");
+      history.push("/login?redirect=/requests-sent");
     } else {
       dispatch(getUserDetails(userInfo._id));
     }
@@ -34,6 +37,9 @@ const RequestsMade = ({ history }) => {
         <Message variant="danger">{error}</Message>
       ) : (
         <>
+          {deleteMessage && (
+            <Message variant="success">{deleteMessage}</Message>
+          )}
           {user && user.outgoingRequests.length === 0 ? (
             <>
               <h1 className="big-heading">

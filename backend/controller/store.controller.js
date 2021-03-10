@@ -2,6 +2,7 @@ const _ = require("lodash");
 const User = require("../models/users.model");
 const Store = require("../models/stores.model");
 const asyncHandler = require("express-async-handler");
+const Item = require("../models/items.model");
 
 // @desc Create a new Store
 // @route POST /api/stores
@@ -133,6 +134,7 @@ const deleteStore = asyncHandler(async (req, res) => {
       },
       { new: true }
     );
+    await Item.deleteMany({ "store._id": store._id });
     await store.remove();
     res.status(200).json({ message: "Store removed" });
   } else {

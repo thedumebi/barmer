@@ -1,4 +1,5 @@
 const _ = require("lodash");
+const fs = require("fs");
 const Item = require("../models/items.model");
 const Store = require("../models/stores.model");
 const asyncHandler = require("express-async-handler");
@@ -12,6 +13,7 @@ const createItem = asyncHandler(async (req, res) => {
   const { name, image, quantity, storeId } = req.body;
 
   const [lastItem] = await Item.find().sort({ created_at: -1 });
+  console.log(lastItem);
   const store = await Store.findById(storeId);
 
   if (store.items.some((item) => item.name === name)) {
@@ -25,6 +27,7 @@ const createItem = asyncHandler(async (req, res) => {
     image,
     quantity,
     store: { ..._.pick(store, ["_id", "id", "name", "category", "owner"]) },
+    created_at: Date.now(),
   });
 
   if (item) {
@@ -233,6 +236,7 @@ const deleteItem = asyncHandler(async (req, res) => {
       },
       { new: true }
     );
+    await fs.unlinkSync(item.image);
     await item.remove();
     res.status(200).json({ message: "Item deleted" });
   } else {
