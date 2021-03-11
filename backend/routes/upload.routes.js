@@ -47,9 +47,9 @@ router.post(
   asyncHandler(async (req, res) => {
     upload(req, res, async (err) => {
       if (err instanceof multer.MulterError) {
-        return res.end(err);
+        return res.end(err.toString());
       } else if (err) {
-        return res.end(err);
+        return res.end(err.toString());
       } else {
         if (req.body.itemId) {
           const item = await Item.findById(req.body.itemId);
