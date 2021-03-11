@@ -54,10 +54,15 @@ router.post(
         if (req.body.itemId) {
           const item = await Item.findById(req.body.itemId);
           if (item.image !== "") {
-            fs.unlinkSync(item.image);
+            try {
+              fs.unlinkSync(item.image);
+            } catch (error) {
+              console.log(error);
+            }
           }
         }
 
+        console.log(req.file.path);
         res.send(`${req.file.path}`);
       }
     });
