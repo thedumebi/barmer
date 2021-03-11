@@ -16,6 +16,17 @@ import {
 import Message from "../components/Message";
 import Request from "./Request";
 import { getUserDetails } from "../actions/user.actions";
+import {
+  Favorite,
+  FavoriteBorder,
+  PostAdd,
+  Edit,
+  Delete,
+  ExposureRounded,
+  BorderColor,
+  LaunchRounded,
+} from "@material-ui/icons";
+import { Fab } from "@material-ui/core";
 
 const Items = ({ item }) => {
   const url = useRouteMatch();
@@ -142,21 +153,29 @@ const Items = ({ item }) => {
             user &&
             user._id === item.store.owner._id && (
               <>
+                {/* edit item button */}
                 <Link to={`/item/${item._id}/edit`}>
-                  <Button className="btn-dark" type="button">
-                    Edit Item
-                  </Button>
+                  <Fab
+                    style={{
+                      backgroundColor: "#343a40",
+                      borderColor: "#343a40",
+                    }}
+                  >
+                    <BorderColor style={{ color: "white" }} />
+                  </Fab>
                 </Link>
-                <Button
-                  className="btn-dark"
-                  type="button"
+
+                {/* delete button */}
+                <Fab
                   onClick={deleteHandler}
+                  style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
                 >
-                  Delete Item
-                </Button>
+                  <Delete style={{ color: "white" }} />
+                </Fab>
               </>
             )}
 
+          {/* favorite button */}
           {item._id &&
             url.path === "/item/:id" &&
             user &&
@@ -164,11 +183,18 @@ const Items = ({ item }) => {
             !user.favorites.includes(
               user.favorites.find((el) => el._id === item._id)
             ) && (
-              <Button className="btn-dark" onClick={favorite}>
-                Favorite
-              </Button>
+              <Fab
+                onClick={favorite}
+                style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
+              >
+                <FavoriteBorder
+                  style={{ color: "#d60b0b" }}
+                  fontSize="default"
+                />
+              </Fab>
             )}
 
+          {/* unfavorite button */}
           {item._id &&
             url.path === "/item/:id" &&
             user &&
@@ -176,68 +202,99 @@ const Items = ({ item }) => {
             user.favorites.includes(
               user.favorites.find((el) => el._id === item._id)
             ) && (
-              <Button className="btn-dark" onClick={unfavorite}>
-                UnFavorite
-              </Button>
+              <Fab
+                onClick={unfavorite}
+                style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
+              >
+                <Favorite style={{ color: "#d60b0b" }} fontSize="default" />
+              </Fab>
             )}
 
+          {/* make request */}
           {item._id &&
             location.pathname === url.url &&
             url.path === "/item/:id" &&
             user &&
             user._id !== item.store.owner._id &&
             !user.outgoingRequests.includes(
-              user.outgoingRequests.find((el) => el.item._id === item._id)
+              user.outgoingRequests
+                .filter((el) => el.status === "pending")
+                .find((el) => el.item._id === item._id)
             ) && (
               <Link to={`${url.url}/request`}>
-                <Button className="btn-dark">Make Request</Button>
+                <Fab
+                  style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
+                >
+                  <PostAdd style={{ color: "white" }} />
+                </Fab>
               </Link>
             )}
 
+          {/* edit request */}
           {item._id &&
             location.pathname === url.url &&
             url.path === "/item/:id" &&
             user &&
             user._id !== item.store.owner._id &&
             user.outgoingRequests.includes(
-              user.outgoingRequests.find((el) => el.item._id === item._id)
+              user.outgoingRequests
+                .filter((el) => el.status === "pending")
+                .find((el) => el.item._id === item._id)
             ) && (
               <Link to={`${url.url}/edit-request`}>
-                <Button className="btn-dark">Edit Request</Button>
+                <Fab
+                  style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
+                >
+                  <Edit style={{ color: "white" }} />
+                </Fab>
               </Link>
             )}
 
+          {/* visit item button */}
           {item._id &&
             (url.path === "/store/:id" ||
               url.path === "/favorites" ||
               url.path === "/items") && (
               <Link to={`/item/${item._id}`}>
-                <Button className="btn-dark" type="button">
-                  View Item
-                </Button>
+                <Fab
+                  style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
+                >
+                  <LaunchRounded style={{ color: "white" }} />
+                </Fab>
               </Link>
             )}
 
+          {/* add/remove item quantity */}
           {item.store &&
             user &&
             user._id === item.store.owner._id &&
             url.path === "/item/:id" && (
               <Link to={`/item/${item._id}/quantity`}>
-                <Button className="btn-dark" type="button">
-                  Add/Remove
-                </Button>
+                <Fab
+                  style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
+                >
+                  <ExposureRounded style={{ color: "white" }} />
+                </Fab>
               </Link>
             )}
 
           {!user && url.path === "/item/:id" && (
             <Link to={`/login?redirect=/item/${item._id}`}>
-              <Button className="btn-dark">Make Request</Button>
+              <Fab
+                style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
+              >
+                <PostAdd style={{ color: "white" }} />
+              </Fab>
             </Link>
           )}
 
           {!user && url.path === "/item/:id" && (
             <Link to={`/login?redirect=/item/${item._id}`}>
-              <Button className="btn-dark">Favorite</Button>
+              <Fab
+                style={{ backgroundColor: "#343a40", borderColor: "#343a40" }}
+              >
+                <FavoriteBorder style={{ color: "white" }} fontSize="default" />
+              </Fab>
             </Link>
           )}
         </>

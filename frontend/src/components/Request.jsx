@@ -57,15 +57,15 @@ const Request = ({ item, user }) => {
     if (
       user &&
       !requestDetail &&
-      user.outgoingRequests.find(
-        (madeRequest) => madeRequest.item._id === item._id
-      )
+      user.outgoingRequests
+        .filter((el) => el.status === "pending")
+        .find((madeRequest) => madeRequest.item._id === item._id)
     ) {
       dispatch(
         getRequestDetails(
-          user.outgoingRequests.find(
-            (madeRequest) => madeRequest.item._id === item._id
-          )._id
+          user.outgoingRequests
+            .filter((el) => el.status === "pending")
+            .find((madeRequest) => madeRequest.item._id === item._id)._id
         )
       );
     }
@@ -189,6 +189,11 @@ const Request = ({ item, user }) => {
       {requestError && <Message variant="danger">{requestError}</Message>}
       {updateError && <Message variant="danger">{updateError}</Message>}
       {loading && <Loader />}
+      <h1>
+        {url.path === "/item/:id/edit-request"
+          ? "Edit Request"
+          : "Make Request"}
+      </h1>
       <ListGroup variant="flush">
         <ListGroup.Item>
           <Form>

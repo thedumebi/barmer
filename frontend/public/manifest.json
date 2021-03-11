@@ -8,13 +8,13 @@
       "type": "image/x-icon"
     },
     {
-      "src": "barmer_logo.png",
-      "type": "image/png",
+      "src": "barmer_logo.jpg",
+      "type": "image/jpg",
       "sizes": "192x192"
     },
     {
-      "src": "barmer_logo.png",
-      "type": "image/png",
+      "src": "barmer_logo.jpg",
+      "type": "image/jpg",
       "sizes": "512x512"
     }
   ],
