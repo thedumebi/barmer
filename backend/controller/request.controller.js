@@ -14,11 +14,12 @@ const createRequest = asyncHandler(async (req, res) => {
   const requestExists = await Request.findOne({
     "item.name": item.name,
     "swapItem.name": swapItem.name,
+    status: "pending",
   });
   if (requestExists) {
     console.log(requestExists);
     res.status(400);
-    throw new Error("Sorry, you have already made a request");
+    throw new Error("Sorry, you already have a pending request");
   }
 
   const request = await Request.create({

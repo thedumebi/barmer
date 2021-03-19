@@ -62,7 +62,6 @@ router.post(
           }
         }
 
-        console.log(req.file.path);
         res.send(`${req.file.path}`);
       }
     });
